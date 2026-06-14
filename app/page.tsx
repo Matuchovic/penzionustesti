@@ -297,32 +297,61 @@ export default function Home() {
       </section>
 
       {/* GALLERY */}
-      <section id="galerie" style={S.gallery}>
-        <div style={S.galleryHeader}>
-          <h2 style={S.galleryTitle}>Galerie</h2>
-          <div style={{textAlign:"right" as const}}>
-            <p style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",color:"#B89A6A",fontSize:"1.3rem"}}>Okolí, které si<br/>zamilujete.</p>
-            <div style={{width:40,height:1,background:"#B89A6A",marginTop:"0.75rem",marginLeft:"auto"}}/>
+      <section id="galerie" style={{background:"#F6F1E8",padding:isMobile?"4rem 0":"6rem 0",overflow:"hidden"}}>
+        <div style={{textAlign:"center" as const,marginBottom:"3rem",padding:"0 2rem"}}>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2.5rem,4vw,4rem)",fontWeight:400,color:"#0F241D",marginBottom:"0.5rem"}}>Galerie</h2>
+          <p style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",color:"#B89A6A",fontSize:"1.1rem"}}>Okolí, které si zamilujete.</p>
+          <div style={{width:40,height:1,background:"linear-gradient(90deg,transparent,#B89A6A,transparent)",margin:"0.75rem auto 0"}}/>
+        </div>
+        <div style={{position:"relative" as const,width:"100%",overflow:"hidden"}}>
+          <div style={{position:"absolute" as const,left:0,top:0,bottom:0,width:isMobile?"60px":"160px",background:"linear-gradient(90deg,#F6F1E8 0%,rgba(246,241,232,0.95) 50%,transparent 100%)",zIndex:10,pointerEvents:"none" as const}}/>
+          <div style={{position:"absolute" as const,right:0,top:0,bottom:0,width:isMobile?"60px":"160px",background:"linear-gradient(270deg,#F6F1E8 0%,rgba(246,241,232,0.95) 50%,transparent 100%)",zIndex:10,pointerEvents:"none" as const}}/>
+          <style>{`
+            @keyframes scroll-gallery{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+            .g-track{display:flex;gap:1.2rem;padding:1rem 0 1.5rem;animation:scroll-gallery 35s linear infinite;width:max-content}
+            .g-track:hover{animation-play-state:paused}
+            .g-card{border-radius:16px;overflow:hidden;flex-shrink:0;position:relative;cursor:pointer;transition:transform 0.4s cubic-bezier(0.4,0,0.2,1)}
+            .g-card:hover{transform:scale(1.04) translateY(-5px)}
+            .g-card img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s ease;display:block}
+            .g-card:hover img{transform:scale(1.08)}
+            .g-overlay{position:absolute;inset:0;border-radius:16px;background:linear-gradient(180deg,transparent 50%,rgba(10,20,12,0.6) 100%);opacity:0;transition:opacity 0.4s}
+            .g-card:hover .g-overlay{opacity:1}
+            .g-label{position:absolute;bottom:0;left:0;right:0;padding:0.8rem 1rem;transform:translateY(8px);opacity:0;transition:all 0.4s;font-family:'Cormorant Garamond',serif;font-style:italic;color:#F6F1E8;font-size:0.9rem}
+            .g-card:hover .g-label{transform:translateY(0);opacity:1}
+          `}</style>
+          <div className="g-track">
+            {[
+              {src:"/images/hero.jpg",label:"Prachovské skály",w:300,h:200},
+              {src:"/images/pool.jpg",label:"Bazén",w:260,h:200},
+              {src:"/images/garden.jpg",label:"Zahrada",w:230,h:200},
+              {src:"/images/room1.jpg",label:"Pokoj",w:280,h:200},
+              {src:"/images/firepit.jpg",label:"Večerní ohniště",w:250,h:200},
+              {src:"/images/exterior.jpg",label:"Penzion",w:300,h:200},
+              {src:"/images/nature.jpg",label:"Příroda",w:260,h:200},
+              {src:"/images/dining.jpg",label:"Jídelna",w:240,h:200},
+              {src:"/images/bar.jpg",label:"Bar",w:220,h:200},
+              {src:"/images/path.jpg",label:"Zahradní cesta",w:260,h:200},
+              {src:"/images/hero.jpg",label:"Prachovské skály",w:300,h:200},
+              {src:"/images/pool.jpg",label:"Bazén",w:260,h:200},
+              {src:"/images/garden.jpg",label:"Zahrada",w:230,h:200},
+              {src:"/images/room1.jpg",label:"Pokoj",w:280,h:200},
+              {src:"/images/firepit.jpg",label:"Večerní ohniště",w:250,h:200},
+              {src:"/images/exterior.jpg",label:"Penzion",w:300,h:200},
+              {src:"/images/nature.jpg",label:"Příroda",w:260,h:200},
+              {src:"/images/dining.jpg",label:"Jídelna",w:240,h:200},
+              {src:"/images/bar.jpg",label:"Bar",w:220,h:200},
+              {src:"/images/path.jpg",label:"Zahradní cesta",w:260,h:200},
+            ].map((img,i)=>(
+              <div key={i} className="g-card" style={{width:img.w,height:img.h}}>
+                <img src={img.src} alt={img.label}/>
+                <div className="g-overlay"/>
+                <div className="g-label">{img.label}</div>
+              </div>
+            ))}
           </div>
         </div>
-        <div className="gallery-grid-mobile" style={S.galleryGrid}>
-          {[
-            {src:"/images/hero.jpg",col:"span 2",h:260},
-            {src:"/images/pool.jpg",col:"span 2",h:260},
-            {src:"/images/garden.jpg",col:"span 2",h:530,row:"span 2",tall:true},
-            {src:"/images/room1.jpg",col:"span 2",h:260},
-            {src:"/images/firepit.jpg",col:"span 2",h:260},
-          ].map((img,i)=>(
-            <div key={i} style={{gridColumn:img.col,gridRow:img.row||"span 1",height:img.h,overflow:"hidden",position:"relative" as const}}>
-              <img src={img.src} alt="" style={{width:"100%",height:"100%",objectFit:"cover" as const,transition:"transform 0.6s ease"}}
-                onMouseEnter={e=>(e.currentTarget.style.transform="scale(1.08)")}
-                onMouseLeave={e=>(e.currentTarget.style.transform="scale(1)")}
-              />
-            </div>
-          ))}
-        </div>
+        <div style={{textAlign:"center" as const,marginTop:"1.5rem",fontFamily:"'Inter',sans-serif",fontSize:"0.55rem",letterSpacing:"0.2em",color:"rgba(15,36,29,0.3)",textTransform:"uppercase" as const}}>Najeďte myší pro pozastavení</div>
       </section>
-
       {/* QUOTE */}
       <section style={S.quoteSection}>
         <div style={S.quoteBg}/>
