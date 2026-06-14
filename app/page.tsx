@@ -476,7 +476,7 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
 
   return (
     <div id="lc-wrap" style={{position:"fixed" as const,top:0,left:0,right:0,bottom:0,width:"100vw",height:"100vh",zIndex:9999,opacity:1,overflow:"hidden"}}>
-      <canvas id="lc-canvas" style={{position:"absolute" as const,top:0,left:0,display:"block"}}/>
+      <canvas id="lc-canvas" style={{position:"absolute" as const,top:0,left:0,width:"100%",height:"100%",display:"block"}}/>
       <div id="lc-logo" style={{position:"absolute" as const,top:0,left:0,right:0,bottom:0,display:"flex",flexDirection:"column" as const,alignItems:"center",justifyContent:"center",opacity:0,zIndex:2,textAlign:"center" as const,padding:"0 2rem",WebkitBackfaceVisibility:"hidden"} as React.CSSProperties}>
         <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2.5rem,6vw,4rem)",fontWeight:300,color:"#F6F1E8",lineHeight:0.88,letterSpacing:"0.02em",textShadow:"0 4px 30px rgba(0,0,0,0.5)"}}>PENZION</div>
         <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2.5rem,6vw,4rem)",fontStyle:"italic",color:"#B89A6A",lineHeight:0.88,textShadow:"0 4px 30px rgba(0,0,0,0.4)"}}>U Štěstí</div>
