@@ -61,7 +61,8 @@ function LeafletMap() {
         <div style="position:relative;display:flex;flex-direction:column;align-items:center">
           <div class="pin-pulse" style="position:relative;width:46px;height:46px;border-radius:50%;background:rgba(10,21,16,0.96);border:2px solid rgba(184,154,106,0.85);display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(184,154,106,0.5),0 0 48px rgba(184,154,106,0.2)">
             <span style="font-size:20px">🏡</span>
-              <div style="margin-top:7px;background:rgba(6,12,8,0.94);border:1px solid rgba(184,154,106,0.35);padding:5px 12px;white-space:nowrap;backdrop-filter:blur(10px)">
+          </div>
+          <div style="margin-top:7px;background:rgba(6,12,8,0.94);border:1px solid rgba(184,154,106,0.35);padding:5px 12px;white-space:nowrap;backdrop-filter:blur(10px)">
             <div style="font-family:Cormorant Garamond,serif;font-style:italic;color:#F6F1E8;font-size:13px;text-align:center;line-height:1.2">Penzion U Štěstí</div>
             <div style="font-family:Inter,sans-serif;font-size:7px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(184,154,106,0.6);text-align:center;margin-top:2px">Dobšín · Český ráj</div>
           </div>
@@ -609,10 +610,8 @@ export default function Home() {
   return (
     <>
       {loading && <LoadingScreen onDone={()=>setLoading(false)}/>}
+      <div style={{display: loading ? "none" : "block"}}>
       <style>{`
-        .main-content { opacity: 0; transition: opacity 0.5s ease; }
-        .main-content.visible { opacity: 1; }`}</style>
-      <div className={loading ? "main-content" : "main-content visible"}><style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; overflow-x: hidden; }
@@ -1066,7 +1065,6 @@ export default function Home() {
           )}
         </div>
       </footer>
-    </div>
     </>
   );
 }
