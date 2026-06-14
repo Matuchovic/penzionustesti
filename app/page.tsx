@@ -9,8 +9,10 @@ function CloudCanvas() {
     const parent = canvas.parentElement;
     if (!parent) return;
 
-    const W = Math.floor(parent.offsetWidth * 0.3);
-    const H = Math.floor(parent.offsetHeight * 0.3);
+    const isMob = parent.offsetWidth < 768;
+    const scale = isMob ? 0.55 : 0.32;
+    const W = Math.floor(parent.offsetWidth * scale);
+    const H = Math.floor(parent.offsetHeight * scale);
     canvas.width = W;
     canvas.height = H;
     const ctx = canvas.getContext("2d")!;
@@ -300,7 +302,7 @@ export default function Home() {
         <div style={{position:"absolute",bottom:0,left:0,right:0,height:"40%",background:"linear-gradient(0deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.25) 50%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
         <div style={{position:"absolute",top:0,bottom:0,left:0,width:"20%",background:"linear-gradient(90deg,rgba(0,0,0,0.3) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
         <div style={{position:"absolute",top:0,bottom:0,right:0,width:"20%",background:"linear-gradient(270deg,rgba(0,0,0,0.3) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
-        <canvas id="cloud-canvas" style={{position:"absolute",inset:0,width:"100%",height:"100%",zIndex:2,mixBlendMode:"screen",opacity:0.85,imageRendering:"pixelated"} as React.CSSProperties}/>
+        <canvas id="cloud-canvas" style={{position:"absolute",inset:0,width:"100%",height:"100%",zIndex:2,mixBlendMode:"screen",opacity:0.85,imageRendering:"auto"} as React.CSSProperties}/>
         <div style={S.heroContent}>
           <h1 className="hero-title hero-title-mobile" style={S.heroTitle}>
             PENZION<span style={S.heroTitleItalic}>U ŠTĚSTÍ</span>
