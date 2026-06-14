@@ -5,38 +5,6 @@ import { useEffect, useState } from "react";
 
 
 
-function GreetingBoard() {
-  const [greeting, setGreeting] = useState("");
-  const [key, setKey] = useState(0);
-
-  function getGreeting() {
-    const h = new Date().getHours();
-    if (h >= 5 && h < 10)  return "🌅 Krásné ráno z Dobšína";
-    if (h >= 10 && h < 12) return "☀️ Krásné dopoledne z Dobšína";
-    if (h >= 12 && h < 18) return "🌤 Krásné odpoledne z Dobšína";
-    if (h >= 18 && h < 22) return "🌇 Krásný večer z Dobšína";
-    return "🌙 Dobrou noc z Dobšína";
-  }
-
-  useEffect(() => {
-    setGreeting(getGreeting());
-    const interval = setInterval(() => {
-      setGreeting(getGreeting());
-      setKey(k => k + 1);
-    }, 3600000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (!greeting) return null;
-
-  return (
-    <div className="greeting-board" key={key}>
-      <div className="greeting-dot"/>
-      <span className="greeting-text">{greeting}</span>
-    </div>
-  );
-}
-
 function LeafletMap() {
   useEffect(() => {
     if ((window as any)._leafletLoaded) return;
@@ -465,10 +433,7 @@ export default function Home() {
         @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
         @keyframes ken-burns{0%{transform:scale(1) translate(0,0)}25%{transform:scale(1.08) translate(-1%,0.5%)}50%{transform:scale(1.12) translate(0.5%,-0.5%)}75%{transform:scale(1.08) translate(-0.5%,1%)}100%{transform:scale(1) translate(0,0)}}
         .hero-bg-zoom{animation:ken-burns 20s ease-in-out infinite;transform-origin:center center;will-change:transform}
-        @keyframes greeting-fade{0%{opacity:0;transform:translateY(-8px)}15%{opacity:1;transform:translateY(0)}85%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(8px)}}
-        .greeting-board{background:rgba(8,18,12,0.45);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(184,154,106,0.2);border-top:1px solid rgba(184,154,106,0.35);padding:0.6rem 2rem;display:inline-flex;align-items:center;gap:0.8rem;margin-bottom:1.5rem;box-shadow:0 8px 32px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.04)}
-        .greeting-dot{width:6px;height:6px;border-radius:50%;background:#B89A6A;box-shadow:0 0 8px rgba(184,154,106,0.8);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
-        .greeting-text{font-family:'Inter',sans-serif;font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(239,231,218,0.75);font-weight:300;animation:greeting-fade 4s ease-in-out}
+
         @keyframes expand-line{to{width:90px}}
         @keyframes fade-up{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
         .logo-top{animation:fade-up 0.8s ease 0s both}
@@ -572,7 +537,6 @@ export default function Home() {
         <div style={{position:"absolute",top:0,bottom:0,right:0,width:"20%",background:"linear-gradient(270deg,rgba(0,0,0,0.3) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
         <canvas id="cloud-canvas" style={{position:"absolute",inset:0,width:"100%",height:"100%",zIndex:2,mixBlendMode:"screen",opacity:0.85,imageRendering:"auto"} as React.CSSProperties}/>
         <div style={S.heroContent}>
-          <GreetingBoard/>
           <h1 className="hero-title hero-title-mobile" style={S.heroTitle}>
             PENZION<span style={S.heroTitleItalic}>U ŠTĚSTÍ</span>
           </h1>
