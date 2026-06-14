@@ -156,27 +156,40 @@ export default function Home() {
       {/* NAV */}
       <nav style={S.nav}>
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"0.1rem",cursor:"pointer"}}>
-          <style>{`
-            @keyframes expand-line{to{width:90px}}
-            @keyframes fade-up{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-            .logo-top{animation:fade-up 0.8s ease 0s both}
-            .logo-main{animation:fade-up 0.8s ease 0.15s both}
-            .logo-line{width:0;height:1px;background:linear-gradient(90deg,transparent,#B89A6A,transparent);animation:expand-line 1.8s ease 0.3s forwards}
-            .logo-sub-txt{animation:fade-up 0.8s ease 0.3s both}
-          `}</style>
-          <div className="logo-top" style={{fontFamily:"'Inter',sans-serif",fontSize:"0.42rem",letterSpacing:"0.45em",textTransform:"uppercase",color:"rgba(184,154,106,0.6)",fontWeight:300}}>Penzion</div>
+          <div className="logo-top" style={{fontFamily:"'Inter',sans-serif",fontSize:"0.42rem",letterSpacing:"0.45em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.6)",fontWeight:300}}>Penzion</div>
           <div className="logo-main" style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"1.5rem",fontWeight:300,color:"#F6F1E8",letterSpacing:"0.04em",lineHeight:1}}>U <em style={{fontStyle:"italic",color:"#B89A6A"}}>Štěstí</em></div>
           <div className="logo-line"></div>
-          <div className="logo-sub-txt" style={{fontFamily:"'Inter',sans-serif",fontSize:"0.38rem",letterSpacing:"0.38em",textTransform:"uppercase",color:"rgba(184,154,106,0.45)",fontWeight:300}}>Český ráj</div>
+          <div className="logo-sub-txt" style={{fontFamily:"'Inter',sans-serif",fontSize:"0.38rem",letterSpacing:"0.38em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.45)",fontWeight:300}}>Český ráj</div>
         </div>
-        <ul style={S.navLinks}>
+        <ul className="nav-links-desktop" style={S.navLinks}>
           {["Pokoje","O penzionu","Český ráj","Galerie","Kontakt"].map(item => (
             <li key={item}><a href={`#${item.toLowerCase().replace(" ","-")}`} style={S.navLink}>{item}</a></li>
           ))}
         </ul>
-        <button style={{background:"linear-gradient(135deg,rgba(184,154,106,0.2),rgba(184,154,106,0.08))",border:"1px solid rgba(184,154,106,0.3)",padding:"0.55rem 1.4rem",fontSize:"0.6rem",letterSpacing:"0.14em",textTransform:"uppercase",color:"#C9AA7A",cursor:"pointer",boxShadow:"0 0 20px rgba(184,154,106,0.1),inset 0 1px 0 rgba(255,255,255,0.05)",fontFamily:"'Inter',sans-serif",transition:"all 0.3s"}}>Rezervovat pobyt</button>
+        <button className="nav-cta-desktop" style={{background:"linear-gradient(135deg,rgba(184,154,106,0.2),rgba(184,154,106,0.08))",border:"1px solid rgba(184,154,106,0.3)",padding:"0.55rem 1.4rem",fontSize:"0.6rem",letterSpacing:"0.14em",textTransform:"uppercase" as const,color:"#C9AA7A",cursor:"pointer",fontFamily:"'Inter',sans-serif"}}>Rezervovat pobyt</button>
+        <button className="hamburger" onClick={()=>setMenuOpen(!menuOpen)} style={{background:"none",border:"none",cursor:"pointer",flexDirection:"column" as const,gap:"6px",padding:"8px"}}>
+          <span style={{width:26,height:2,background:"#F6F1E8",display:"block",transition:"all 0.35s",transform:menuOpen?"rotate(45deg) translate(0,8px)":"none"}}/>
+          <span style={{width:26,height:2,background:"#F6F1E8",display:"block",transition:"all 0.35s",opacity:menuOpen?0:1}}/>
+          <span style={{width:26,height:2,background:"#F6F1E8",display:"block",transition:"all 0.35s",transform:menuOpen?"rotate(-45deg) translate(0,-8px)":"none"}}/>
+        </button>
       </nav>
-
+      {menuOpen && (
+        <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,zIndex:999,background:"rgba(5,15,8,0.97)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",display:"flex",flexDirection:"column" as const,alignItems:"center",justifyContent:"center"}}>
+          <button onClick={()=>setMenuOpen(false)} style={{position:"absolute",top:"1.5rem",right:"1.5rem",background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column" as const,gap:"6px",padding:"8px"}}>
+            <span style={{width:26,height:2,background:"#F6F1E8",display:"block",transform:"rotate(45deg) translate(0,8px)"}}/>
+            <span style={{width:26,height:2,background:"#F6F1E8",display:"block",opacity:0}}/>
+            <span style={{width:26,height:2,background:"#F6F1E8",display:"block",transform:"rotate(-45deg) translate(0,-8px)"}}/>
+          </button>
+          <div style={{fontFamily:"'Inter',sans-serif",fontSize:"0.5rem",letterSpacing:"0.3em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.4)",marginBottom:"3rem"}}>Menu</div>
+          {["Pokoje","O penzionu","Český ráj","Galerie","Kontakt"].map(item => (
+            <a key={item} href={`#${item.toLowerCase().replace(" ","-")}`} onClick={()=>setMenuOpen(false)}
+              style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"2.8rem",fontWeight:300,color:"#F6F1E8",letterSpacing:"0.06em",padding:"0.7rem 0",borderBottom:"1px solid rgba(184,154,106,0.1)",width:"70%",textAlign:"center" as const}}>
+              {item}
+            </a>
+          ))}
+          <button onClick={()=>setMenuOpen(false)} style={{marginTop:"3rem",background:"linear-gradient(135deg,rgba(184,154,106,0.2),rgba(184,154,106,0.08))",border:"1px solid rgba(184,154,106,0.4)",padding:"0.9rem 3rem",fontSize:"0.65rem",letterSpacing:"0.15em",textTransform:"uppercase" as const,color:"#C9AA7A",cursor:"pointer",fontFamily:"'Inter',sans-serif"}}>Rezervovat pobyt</button>
+        </div>
+      )}
       {/* HERO */}
       <section style={S.hero}>
         <div style={S.heroBg}/>
