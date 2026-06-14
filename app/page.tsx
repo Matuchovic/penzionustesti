@@ -442,16 +442,23 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
       // Logo fade in
       const logoEl = document.getElementById("lc-logo");
       if(logoEl){
-        if(t>260) logoEl.style.opacity = String(Math.min(1,(t-260)/60));
+        if(t>110) logoEl.style.opacity = String(Math.min(1,(t-110)/25));
       }
 
       // Done — fade out whole screen
+      // Progress bar
+      const barEl = document.getElementById("lc-bar");
+      const pctEl = document.getElementById("lc-pct");
+      const prog = Math.min(100, Math.floor((t/200)*100));
+      if(barEl) barEl.style.width = prog+"%";
+      if(pctEl) pctEl.textContent = prog+"%";
+
       if(full>0.98){
         const el = document.getElementById("lc-wrap");
         if(el && el.style.opacity !== "0"){
-          el.style.transition="opacity 0.8s ease";
+          el.style.transition="opacity 0.5s ease";
           el.style.opacity="0";
-          setTimeout(onDone, 800);
+          setTimeout(onDone, 500);
         }
       }
 
@@ -464,11 +471,15 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
   return (
     <div id="lc-wrap" style={{position:"fixed" as const,inset:0,zIndex:9999,opacity:1}}>
       <canvas id="lc-canvas" style={{position:"absolute" as const,inset:0,width:"100%",height:"100%"}}/>
-      <div id="lc-logo" style={{position:"absolute" as const,inset:0,display:"flex",flexDirection:"column" as const,alignItems:"center",justifyContent:"center",opacity:0,zIndex:2,textAlign:"center" as const}}>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2rem,5vw,3.5rem)",fontWeight:300,color:"#F6F1E8",lineHeight:0.9,letterSpacing:"0.02em"}}>PENZION</div>
-        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2rem,5vw,3.5rem)",fontStyle:"italic",color:"#B89A6A",lineHeight:0.9}}>U Štěstí</div>
-        <div style={{width:60,height:1,background:"linear-gradient(90deg,transparent,rgba(184,154,106,0.7),transparent)",margin:"1rem auto"}}/>
-        <div style={{fontFamily:"'Inter',sans-serif",fontSize:"0.5rem",letterSpacing:"0.4em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.5)"}}>Český ráj · Dobšín</div>
+      <div id="lc-logo" style={{position:"absolute" as const,inset:0,display:"flex",flexDirection:"column" as const,alignItems:"center",justifyContent:"center",opacity:0,zIndex:2,textAlign:"center" as const,padding:"0 2rem"}}>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2.5rem,6vw,4rem)",fontWeight:300,color:"#F6F1E8",lineHeight:0.88,letterSpacing:"0.02em",textShadow:"0 4px 30px rgba(0,0,0,0.5)"}}>PENZION</div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2.5rem,6vw,4rem)",fontStyle:"italic",color:"#B89A6A",lineHeight:0.88,textShadow:"0 4px 30px rgba(0,0,0,0.4)"}}>U Štěstí</div>
+        <div style={{width:55,height:1,background:"linear-gradient(90deg,transparent,rgba(184,154,106,0.7),transparent)",margin:"1.2rem auto 0.8rem"}}/>
+        <div style={{fontFamily:"'Inter',sans-serif",fontSize:"0.42rem",letterSpacing:"0.4em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.5)",marginBottom:"2rem"}}>Český ráj · Dobšín</div>
+        <div style={{width:120,height:1,background:"rgba(255,255,255,0.06)",position:"relative" as const,overflow:"hidden",borderRadius:999}}>
+          <div id="lc-bar" style={{position:"absolute" as const,left:0,top:0,height:"100%",width:"0%",background:"linear-gradient(90deg,transparent,rgba(184,154,106,0.9),rgba(220,195,150,1))",transition:"width 0.1s linear"}}/>
+        </div>
+        <div id="lc-pct" style={{fontFamily:"'Inter',sans-serif",fontSize:"0.38rem",letterSpacing:"0.15em",color:"rgba(184,154,106,0.3)",marginTop:6}}>0%</div>
       </div>
     </div>
   );
