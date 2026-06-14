@@ -2,6 +2,133 @@
 import { useEffect, useState } from "react";
 
 
+
+function MapCanvas() {
+  useEffect(() => {
+    const canvases = ["mc0","mc1","mc3"].map(id => document.getElementById(id) as HTMLCanvasElement);
+    if(!canvases[0]) return;
+    const wrap = canvases[0].parentElement!;
+    const W = wrap.offsetWidth, H = wrap.offsetHeight;
+    canvases.forEach(c => { if(c){c.width=W;c.height=H;} });
+    const [c0,c1,c3] = canvases.map(c => c?.getContext("2d")!);
+    const CX=W*0.48, CY=H*0.52;
+
+    // Permutation
+    const perm=new Uint8Array(512);const p=new Uint8Array(256);
+    for(let i=0;i<256;i++)p[i]=i;
+    for(let i=255;i>0;i--){const j=Math.floor(Math.random()*(i+1));[p[i],p[j]]=[p[j],p[i]];}
+    for(let i=0;i<512;i++)perm[i]=p[i&255];
+    const g3=[[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];
+    const fade=(t:number)=>t*t*t*(t*(t*6-15)+10);
+    const lerp=(a:number,b:number,t:number)=>a+t*(b-a);
+    const dot2=(g:number[],x:number,y:number)=>g[0]*x+g[1]*y;
+    function noise2(x:number,y:number){
+      const X=Math.floor(x)&255,Y=Math.floor(y)&255;
+      const xf=x-Math.floor(x),yf=y-Math.floor(y);
+      const u=fade(xf),v=fade(yf);
+      const a=perm[X]+Y,b=perm[X+1]+Y;
+      return lerp(lerp(dot2(g3[perm[a]%8],xf,yf),dot2(g3[perm[b]%8],xf-1,yf),u),lerp(dot2(g3[perm[a+1]%8],xf,yf-1),dot2(g3[perm[b+1]%8],xf-1,yf-1),u),v);
+    }
+    function fbm(x:number,y:number,o:number){let v=0,amp=0.5,freq=1,max=0;for(let i=0;i<o;i++){v+=noise2(x*freq,y*freq)*amp;max+=amp;amp*=0.5;freq*=2;}return v/max;}
+
+    // Terrain
+    const bg=c0.createRadialGradient(CX,CY,0,CX,CY,W*0.8);
+    bg.addColorStop(0,"#0d1f14");bg.addColorStop(0.5,"#081408");bg.addColorStop(1,"#040a05");
+    c0.fillStyle=bg;c0.fillRect(0,0,W,H);
+    const hexS=Math.max(20,W*0.04);
+    const hexW=hexS*2,hexH=Math.sqrt(3)*hexS;
+    c0.strokeStyle="rgba(184,154,106,0.04)";c0.lineWidth=0.5;
+    for(let row=-2;row<H/hexH+2;row++){for(let col=-2;col<W/hexW+2;col++){
+      const x=col*hexW*0.75+(row%2===0?0:hexW*0.375),y=row*hexH;
+      c0.beginPath();for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);c0.lineTo(x+hexS*Math.cos(a),y+hexS*Math.sin(a));}c0.closePath();c0.stroke();
+    }}
+    [{x:CX-140,y:CY-90,r:110,o:0.18},{x:CX+180,y:CY-110,r:95,o:0.14},{x:CX-220,y:CY+70,r:85,o:0.12},{x:CX+90,y:CY+100,r:100,o:0.15}].forEach(z=>{
+      const g=c0.createRadialGradient(z.x,z.y,0,z.x,z.y,z.r);g.addColorStop(0,`rgba(20,55,20,${z.o})`);g.addColorStop(1,"rgba(0,0,0,0)");
+      c0.beginPath();c0.arc(z.x,z.y,z.r,0,Math.PI*2);c0.fillStyle=g;c0.fill();
+    });
+
+    // Roads
+    c1.beginPath();c1.moveTo(CX-300,CY+200);c1.bezierCurveTo(CX-160,CY+140,CX-40,CY+170,CX+100,CY+140);c1.bezierCurveTo(CX+200,CY+115,CX+280,CY+75,CX+340,CY+30);
+    c1.strokeStyle="rgba(30,70,120,0.5)";c1.lineWidth=5;c1.shadowColor="rgba(40,100,180,0.3)";c1.shadowBlur=10;c1.stroke();c1.shadowBlur=0;
+
+    const roads=[
+      {pts:[[CX-380,CY-25],[CX-190,CY-12],[CX-70,CY+3],[CX+30,CY+12],[CX+160,CY+7],[CX+310,CY-8],[CX+400,CY-18]],w:4,col:"rgba(210,185,140,0.8)",name:"I-35",glow:true},
+      {pts:[[CX+30,CY+12],[CX+18,CY+55],[CX,CY+130]],w:2.5,col:"rgba(190,165,120,0.6)"},
+      {pts:[[CX-70,CY+3],[CX-90,CY-55],[CX-130,CY-160]],w:2,col:"rgba(180,155,110,0.5)"},
+      {pts:[[CX+160,CY+7],[CX+185,CY+52],[CX+205,CY+95]],w:2,col:"rgba(175,150,105,0.45)"},
+      {pts:[[CX-190,CY-12],[CX-215,CY-65],[CX-275,CY-160]],w:1.5,col:"rgba(165,142,100,0.4)"},
+    ];
+    roads.forEach(r=>{
+      const draw=(ctx:CanvasRenderingContext2D,w:number,col:string)=>{
+        ctx.beginPath();ctx.moveTo(r.pts[0][0],r.pts[0][1]);
+        for(let i=1;i<r.pts.length;i++){
+          if(i<r.pts.length-1){const mx=(r.pts[i][0]+r.pts[i+1][0])/2,my=(r.pts[i][1]+r.pts[i+1][1])/2;ctx.quadraticCurveTo(r.pts[i][0],r.pts[i][1],mx,my);}
+          else ctx.lineTo(r.pts[i][0],r.pts[i][1]);
+        }
+        if(r.glow){ctx.shadowColor="rgba(210,185,140,0.3)";ctx.shadowBlur=6;}
+        ctx.strokeStyle=col;ctx.lineWidth=w;ctx.lineCap="round";ctx.lineJoin="round";ctx.stroke();ctx.shadowBlur=0;
+      };
+      draw(c1,r.w+2.5,"rgba(0,0,0,0.5)");draw(c1,r.w,r.col);
+      if(r.name){c1.font="600 9px Inter";c1.fillStyle="rgba(210,185,140,0.65)";c1.textAlign="center";c1.fillText(r.name,r.pts[2][0],r.pts[2][1]-8);}
+    });
+    [{x:CX-195,y:CY-14,n:"Jičín",r:7,g:false},{x:CX+210,y:CY-9,n:"Turnov",r:6,g:false},{x:CX+98,y:CY-75,n:"Trosky 🏰",r:5,g:true},{x:CX-118,y:CY-62,n:"Prachovské skály ⛰",r:4,g:true},{x:CX-60,y:CY-108,n:"Sobotka",r:4,g:false}].forEach(p=>{
+      c1.beginPath();c1.arc(p.x,p.y,p.r,0,Math.PI*2);c1.fillStyle=p.g?"rgba(184,154,106,0.7)":"rgba(200,180,140,0.45)";
+      if(p.g){c1.shadowColor="rgba(184,154,106,0.5)";c1.shadowBlur=8;}c1.fill();c1.shadowBlur=0;
+      c1.font=p.g?"italic 10px Cormorant Garamond,serif":"300 9px Inter,sans-serif";
+      c1.fillStyle=p.g?"rgba(184,154,106,0.8)":"rgba(200,180,150,0.5)";c1.textAlign="center";c1.fillText(p.n,p.x,p.y-p.r-5);
+    });
+
+    const cars=[
+      {route:[[CX-380,CY-25],[CX-190,CY-12],[CX-70,CY+3],[CX+30,CY+12],[CX+160,CY+7],[CX+310,CY-8],[CX+400,CY-18]],t:0,sp:0.0006,col:"rgba(255,220,150,0.95)"},
+      {route:[[CX-380,CY-25],[CX-190,CY-12],[CX-70,CY+3],[CX+30,CY+12],[CX+160,CY+7],[CX+310,CY-8],[CX+400,CY-18]],t:0.38,sp:0.0005,col:"rgba(200,230,255,0.7)"},
+      {route:[[CX+400,CY-18],[CX+310,CY-8],[CX+160,CY+7],[CX+30,CY+12],[CX-70,CY+3],[CX-190,CY-12],[CX-380,CY-25]],t:0.2,sp:0.0007,col:"rgba(255,200,120,0.8)"},
+    ];
+    const getP=(pts:number[][],t:number)=>{t=((t%1)+1)%1;const s=Math.floor(t*(pts.length-1)),st=t*(pts.length-1)-s;if(s>=pts.length-1)return pts[pts.length-1];return[pts[s][0]+(pts[s+1][0]-pts[s][0])*st,pts[s][1]+(pts[s+1][1]-pts[s][1])*st];};
+    const particles=Array.from({length:30},()=>{const a=Math.random()*Math.PI*2,d=15+Math.random()*200;return{x:CX+Math.cos(a)*d*1.5,y:CY+Math.sin(a)*d*0.75,s:0.5+Math.random()*1.5,sp:0.001+Math.random()*0.0015,o:Math.random()*Math.PI*2,dr:Math.random()*Math.PI*2};});
+
+    let t2=0;let animId:number;
+    function draw(){
+      c3.clearRect(0,0,W,H);
+      const sy=(t2*0.035)%H;
+      const sg=c3.createLinearGradient(0,sy-30,0,sy+30);
+      sg.addColorStop(0,"rgba(184,154,106,0)");sg.addColorStop(0.5,"rgba(184,154,106,0.05)");sg.addColorStop(1,"rgba(184,154,106,0)");
+      c3.fillStyle=sg;c3.fillRect(0,Math.max(0,sy-30),W,60);
+      particles.forEach(p=>{p.o+=p.sp;const a=Math.sin(p.o)*0.5+0.5;c3.beginPath();c3.arc(p.x+Math.sin(p.dr+t2*0.0008)*4,p.y+Math.cos(p.dr+t2*0.0006)*2.5,p.s,0,Math.PI*2);c3.fillStyle=`rgba(184,154,106,${a*0.28})`;c3.fill();});
+      cars.forEach(car=>{
+        car.t=(car.t+car.sp)%1;const [cx2,cy2]=getP(car.route,car.t);
+        for(let i=1;i<=6;i++){const [tx,ty]=getP(car.route,((car.t-i*0.008)%1+1)%1);c3.beginPath();c3.arc(tx,ty,1.5,0,Math.PI*2);c3.fillStyle=car.col.replace(/[\d.]+\)$/,`${Math.max(0,0.15-i*0.02)})`);c3.fill();}
+        c3.beginPath();c3.arc(cx2,cy2,2.5,0,Math.PI*2);c3.fillStyle=car.col;c3.shadowColor=car.col;c3.shadowBlur=10;c3.fill();c3.shadowBlur=0;
+      });
+      const pulse=Math.sin(t2*0.045)*0.4+0.6,pr=20+Math.sin(t2*0.045)*2;
+      [pr+28,pr+18,pr+8].forEach((r,i)=>{c3.beginPath();c3.arc(CX,CY,r,0,Math.PI*2);c3.strokeStyle=`rgba(184,154,106,${[0.08,0.14,0.25][i]*pulse})`;c3.lineWidth=1;c3.stroke();});
+      const pg=c3.createRadialGradient(CX-3,CY-3,0,CX,CY,pr);pg.addColorStop(0,"rgba(35,70,40,0.97)");pg.addColorStop(1,"rgba(8,20,14,0.97)");
+      c3.beginPath();c3.arc(CX,CY,pr,0,Math.PI*2);c3.fillStyle=pg;c3.shadowColor=`rgba(184,154,106,${0.6*pulse})`;c3.shadowBlur=20;c3.fill();c3.shadowBlur=0;
+      c3.beginPath();c3.arc(CX,CY,pr,0,Math.PI*2);c3.strokeStyle=`rgba(184,154,106,${0.8*pulse})`;c3.lineWidth=1.5;c3.stroke();
+      c3.font="14px serif";c3.textAlign="center";c3.fillText("🏡",CX,CY+5);
+      c3.fillStyle=`rgba(184,154,106,${0.9*pulse})`;c3.font="italic 11px Cormorant Garamond,serif";c3.fillText("Penzion U Štěstí",CX,CY-pr-16);
+      c3.font="7px Inter,sans-serif";c3.fillStyle=`rgba(184,154,106,${0.5*pulse})`;c3.fillText("D O B Š Í N",CX,CY-pr-6);
+      const pp=((t2*0.008)%1);const ppts=[[CX-360,CY-22],[CX-250,CY-16],[CX-140,CY-8],[CX-50,CY],[CX,CY]];
+      if(pp>0){c3.beginPath();c3.moveTo(ppts[0][0],ppts[0][1]);const steps=Math.floor(pp*(ppts.length-1)*20);for(let i=1;i<ppts.length;i++){if(i<=pp*(ppts.length-1))c3.lineTo(ppts[i][0],ppts[i][1]);}c3.strokeStyle="rgba(184,154,106,0.35)";c3.lineWidth=1.5;c3.setLineDash([4,4]);c3.lineDashOffset=-t2*0.5;c3.stroke();c3.setLineDash([]);}
+      c3.save();c3.translate(CX,CY);c3.rotate(t2*0.01);c3.beginPath();for(let i=0;i<6;i++){const a=Math.PI/3*i;c3.lineTo(Math.cos(a)*50,Math.sin(a)*50);}c3.closePath();c3.strokeStyle=`rgba(184,154,106,${0.07*pulse})`;c3.lineWidth=1;c3.stroke();c3.restore();
+      c3.strokeStyle="rgba(184,154,106,0.4)";c3.lineWidth=1.5;
+      [[10,10,"tl"],[W-10,10,"tr"],[10,H-10,"bl"],[W-10,H-10,"br"]].forEach(([x,y,pos])=>{
+        const s=14;c3.beginPath();
+        if(pos==="tl"){c3.moveTo(x as number,y as number+s);c3.lineTo(x as number,y as number);c3.lineTo(x as number+s,y as number);}
+        else if(pos==="tr"){c3.moveTo(x as number-s,y as number);c3.lineTo(x as number,y as number);c3.lineTo(x as number,y as number+s);}
+        else if(pos==="bl"){c3.moveTo(x as number,y as number-s);c3.lineTo(x as number,y as number);c3.lineTo(x as number+s,y as number);}
+        else{c3.moveTo(x as number-s,y as number);c3.lineTo(x as number,y as number);c3.lineTo(x as number,y as number-s);}
+        c3.stroke();
+      });
+      const el=document.getElementById("map-coords");
+      if(el){const lat=(50.4982+Math.sin(t2*0.00008)*0.00006).toFixed(4);const lng=(15.2350+Math.cos(t2*0.00006)*0.00006).toFixed(4);el.textContent=`${lat}° N · ${lng}° E · 342 m n.m.`;}
+      t2++;animId=requestAnimationFrame(draw);
+    }
+    draw();
+    return ()=>cancelAnimationFrame(animId);
+  },[]);
+  return null;
+}
+
 function CloudCanvas() {
   useEffect(() => {
     const canvas = document.getElementById("cloud-canvas") as HTMLCanvasElement;
@@ -482,6 +609,43 @@ export default function Home() {
         </div>
       </section>
 
+      {/* MAP */}
+      <section style={{background:"#0a1510",padding:"4rem 0 0",overflow:"hidden"}}>
+        <div style={{textAlign:"center" as const,padding:"0 2rem 2rem"}}>
+          <p style={{fontSize:"0.46rem",letterSpacing:"0.4em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.55)",marginBottom:"0.7rem",fontFamily:"'Inter',sans-serif"}}>Jak nás najdete</p>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2rem,3.5vw,2.8rem)",fontWeight:300,color:"#F6F1E8",marginBottom:"0.3rem"}}>Dobšín, <em style={{fontStyle:"italic",color:"#B89A6A"}}>Český ráj</em></h2>
+          <p style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",color:"rgba(239,231,218,0.35)",fontSize:"0.85rem"}}>Rovensko pod Troskami · 512 63</p>
+          <div style={{width:50,height:1,background:"linear-gradient(90deg,transparent,rgba(184,154,106,0.6),transparent)",margin:"0.7rem auto 0"}}/>
+        </div>
+        <div style={{position:"relative" as const,width:"100%",height:isMobile?320:480}}>
+          <canvas id="mc0" style={{position:"absolute" as const,inset:0,width:"100%",height:"100%",zIndex:1}}/>
+          <canvas id="mc1" style={{position:"absolute" as const,inset:0,width:"100%",height:"100%",zIndex:2}}/>
+          <canvas id="mc3" style={{position:"absolute" as const,inset:0,width:"100%",height:"100%",zIndex:4}}/>
+          <div style={{position:"absolute" as const,top:0,left:0,right:0,height:80,background:"linear-gradient(180deg,#0a1510,transparent)",zIndex:10,pointerEvents:"none" as const}}/>
+          <div style={{position:"absolute" as const,bottom:0,left:0,right:0,height:80,background:"linear-gradient(0deg,#0a1510,transparent)",zIndex:10,pointerEvents:"none" as const}}/>
+          <div style={{position:"absolute" as const,top:0,left:0,bottom:0,width:80,background:"linear-gradient(90deg,#0a1510,transparent)",zIndex:10,pointerEvents:"none" as const}}/>
+          <div style={{position:"absolute" as const,top:0,right:0,bottom:0,width:80,background:"linear-gradient(270deg,#0a1510,transparent)",zIndex:10,pointerEvents:"none" as const}}/>
+          {["tl","tr","bl","br"].map(c=>(
+            <div key={c} style={{position:"absolute" as const,width:14,height:14,zIndex:20,pointerEvents:"none" as const,borderColor:"rgba(184,154,106,0.35)",borderStyle:"solid",borderWidth:c==="tl"?"1.5px 0 0 1.5px":c==="tr"?"1.5px 1.5px 0 0":c==="bl"?"0 0 1.5px 1.5px":"0 1.5px 1.5px 0",top:c.includes("t")?10:undefined,bottom:c.includes("b")?10:undefined,left:c.includes("l")?10:undefined,right:c.includes("r")?10:undefined}}/>
+          ))}
+          <div style={{position:"absolute" as const,right:isMobile?10:90,top:16,zIndex:20,display:"flex",flexDirection:"column" as const,gap:6,pointerEvents:"none" as const}}>
+            <div style={{background:"rgba(6,12,8,0.88)",border:"1px solid rgba(184,154,106,0.2)",padding:"5px 10px",backdropFilter:"blur(12px)"}}>
+              <div style={{fontSize:7,letterSpacing:"0.15em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.45)",fontFamily:"'Inter',sans-serif",marginBottom:3}}>Vzdálenosti</div>
+              {[["Praha","88 km"],["Prachovské skály","8 km"],["Hrad Trosky","12 km"],["Turnov","18 km"]].map(([n,v])=>(
+                <div key={n} style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
+                  <span style={{fontSize:7,color:"rgba(184,154,106,0.5)",whiteSpace:"nowrap" as const,fontFamily:"'Inter',sans-serif"}}>{n}</span>
+                  <div style={{flex:1,height:1,background:"linear-gradient(90deg,rgba(184,154,106,0.3),transparent)"}}/>
+                  <span style={{fontSize:7,color:"rgba(239,231,218,0.7)",whiteSpace:"nowrap" as const,fontFamily:"'Inter',sans-serif"}}>{v}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style={{position:"absolute" as const,left:isMobile?10:90,bottom:16,zIndex:20,background:"rgba(6,12,8,0.85)",border:"1px solid rgba(184,154,106,0.15)",padding:"4px 10px",pointerEvents:"none" as const}}>
+            <div id="map-coords" style={{fontSize:7,letterSpacing:"0.12em",color:"rgba(184,154,106,0.4)",fontFamily:"'Inter',sans-serif"}}>50.4982° N · 15.2350° E · 342 m n.m.</div>
+          </div>
+        </div>
+        <MapCanvas/>
+      </section>
       {/* FOOTER */}
       <footer id="kontakt" style={{background:"#0F241D",color:"#F6F1E8",position:"relative" as const,overflow:"hidden"}}>
         <div style={{position:"absolute",top:0,left:0,right:0,height:"1px",background:"linear-gradient(90deg,transparent,rgba(184,154,106,0.4),transparent)"}}/>
