@@ -331,10 +331,14 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
   useEffect(() => {
     const c = document.getElementById("lc-canvas") as HTMLCanvasElement;
     if(!c) return;
-    c.width = window.innerWidth;
-    c.height = window.innerHeight;
-
-    const W = c.width, H = c.height;
+    const dpr = Math.min(window.devicePixelRatio||1, 2);
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    c.width = vw*dpr; c.height = vh*dpr;
+    c.style.width = vw+"px"; c.style.height = vh+"px";
+    const ctx = c.getContext("2d")!;
+    ctx.scale(dpr, dpr);
+    const W = vw, H = vh;
     let t = 0;
     let animId: number;
 
@@ -350,11 +354,11 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
     ];
 
     function drawBird(x:number,y:number,s:number,wt:number,a:number){
-      ctx2d.beginPath();
-      ctx2d.moveTo(x,y);ctx2d.quadraticCurveTo(x-s*9,y-Math.sin(wt)*s*4.5,x-s*18,y);
-      ctx2d.moveTo(x,y);ctx2d.quadraticCurveTo(x+s*9,y-Math.sin(wt+0.22)*s*4,x+s*18,y);
-      ctx2d.strokeStyle=`rgba(${Math.floor(8+a*7)},${Math.floor(18+a*12)},${Math.floor(10+a*8)},${0.6+a*0.3})`;
-      ctx2d.lineWidth=0.9;ctx2d.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x,y); ctx.quadraticCurveTo(x-s*9, y-Math.sin(wt)*s*4.5, x-s*18, y);
+      ctx.moveTo(x,y); ctx.quadraticCurveTo(x+s*9, y-Math.sin(wt+0.22)*s*4, x+s*18, y);
+      ctx.strokeStyle=`rgba(${Math.floor(8+a*7)},${Math.floor(18+a*12)},${Math.floor(10+a*8)},${0.6+a*0.3})`;
+      ctx.lineWidth=0.9; ctx.stroke();
     }
 
     let lastTime=0;
@@ -362,61 +366,56 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
       const delta=Math.min(ts-lastTime,50);
       lastTime=ts;
       t+=delta>0?delta/12:1;
-      const night = Math.max(0, 1-t/160);
-      const dawn  = Math.min(1, Math.max(0,(t-45)/130));
-      const full  = Math.min(1, Math.max(0,(t-150)/50));
+      const night=Math.max(0,1-t/160);
+      const dawn=Math.min(1,Math.max(0,(t-45)/130));
+      const full=Math.min(1,Math.max(0,(t-150)/50));
 
-      // Sky gradient night→dawn
-      const g = ctx.createLinearGradient(0,0,0,H);
-      g.addColorStop(0,   `rgb(${Math.floor(2+dawn*25)},${Math.floor(5+dawn*28)},${Math.floor(18+dawn*12)})`);
+      const g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,`rgb(${Math.floor(2+dawn*25)},${Math.floor(5+dawn*28)},${Math.floor(18+dawn*12)})`);
       g.addColorStop(0.35,`rgb(${Math.floor(5+dawn*35)},${Math.floor(12+dawn*35)},${Math.floor(22+dawn*10)})`);
-      g.addColorStop(0.7, `rgb(${Math.floor(8+dawn*45)},${Math.floor(18+dawn*40)},${Math.floor(15+dawn*8)})`);
-      g.addColorStop(1,   `rgb(3,8,4)`);
-      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      g.addColorStop(0.7,`rgb(${Math.floor(8+dawn*45)},${Math.floor(18+dawn*40)},${Math.floor(15+dawn*8)})`);
+      g.addColorStop(1,`rgb(3,8,4)`);
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
-      // Stars fading out
       if(night>0.05){
         stars.forEach(s=>{
           s.tw+=s.sp;
           const a=night*(0.25+Math.sin(s.tw)*0.18);
-          ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-          ctx.fillStyle=`rgba(220,215,205,${Math.max(0,a)})`;ctx.fill();
+          ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+          ctx.fillStyle=`rgba(220,215,205,${Math.max(0,a)})`; ctx.fill();
         });
       }
 
-      // Moon fading
       if(night>0.2){
         const mx=W*0.25, my=H*0.15;
         const mg=ctx.createRadialGradient(mx,my,0,mx,my,30);
         mg.addColorStop(0,`rgba(230,220,200,${night*0.5})`);
         mg.addColorStop(0.4,`rgba(200,190,170,${night*0.15})`);
-        mg.addColorStop(1,'rgba(200,190,170,0)');
-        ctx.fillStyle=mg;ctx.fillRect(0,0,W,H);
-        ctx.beginPath();ctx.arc(mx,my,night*12,0,Math.PI*2);
-        ctx.fillStyle=`rgba(235,228,210,${night*0.55})`;ctx.fill();
+        mg.addColorStop(1,"rgba(200,190,170,0)");
+        ctx.fillStyle=mg; ctx.fillRect(0,0,W,H);
+        ctx.beginPath(); ctx.arc(mx,my,night*12,0,Math.PI*2);
+        ctx.fillStyle=`rgba(235,228,210,${night*0.55})`; ctx.fill();
       }
 
-      // Dawn sun glow
       if(dawn>0){
         const sx=W*0.58, sy=H*(0.28-dawn*0.06);
         const sg=ctx.createRadialGradient(sx,sy,0,sx,sy,H*0.55);
         sg.addColorStop(0,`rgba(255,185,80,${dawn*0.22})`);
         sg.addColorStop(0.25,`rgba(255,140,50,${dawn*0.09})`);
         sg.addColorStop(0.6,`rgba(220,100,30,${dawn*0.04})`);
-        sg.addColorStop(1,'rgba(220,80,20,0)');
-        ctx.fillStyle=sg;ctx.fillRect(0,0,W,H);
+        sg.addColorStop(1,"rgba(220,80,20,0)");
+        ctx.fillStyle=sg; ctx.fillRect(0,0,W,H);
         if(dawn>0.4){
           const sa=(dawn-0.4)/0.6;
-          ctx.beginPath();ctx.arc(sx,sy,sa*14,0,Math.PI*2);
-          ctx.fillStyle=`rgba(255,215,130,${sa*0.55})`;ctx.fill();
+          ctx.beginPath(); ctx.arc(sx,sy,sa*14,0,Math.PI*2);
+          ctx.fillStyle=`rgba(255,215,130,${sa*0.55})`; ctx.fill();
           const halo=ctx.createRadialGradient(sx,sy,sa*14,sx,sy,sa*35);
           halo.addColorStop(0,`rgba(255,200,100,${sa*0.2})`);
-          halo.addColorStop(1,'rgba(255,200,100,0)');
-          ctx.fillStyle=halo;ctx.fillRect(0,0,W,H);
+          halo.addColorStop(1,"rgba(255,200,100,0)");
+          ctx.fillStyle=halo; ctx.fillRect(0,0,W,H);
         }
       }
 
-      // Fog layers
       for(let i=0;i<4;i++){
         const fy=H*(0.5+i*0.08);
         const fc=Math.floor(160+dawn*30);
@@ -427,60 +426,55 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
         fg.addColorStop(1,`rgba(${fc},${fc+8},${fc-4},0)`);
         ctx.fillStyle=fg;
         ctx.beginPath();
-        for(let x=0;x<=W;x+=5){const y=fy+Math.sin(x*0.012+t*0.015+i*1.4)*9;x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
-        ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
+        for(let x=0;x<=W;x+=5){const y=fy+Math.sin(x*0.012+t*0.015+i*1.4)*9; x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+        ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath(); ctx.fill();
       }
 
-      // Forest silhouette layers
       ([
-        [0.97,0.010,0.12,'rgba(3,9,4,1)'],
-        [0.88,0.016,0.15,'rgba(4,11,5,0.95)'],
-        [0.79,0.024,0.17,'rgba(5,13,6,0.88)'],
-        [0.71,0.033,0.16,'rgba(7,16,8,0.78)']
+        [0.97,0.010,0.12,"rgba(3,9,4,1)"],
+        [0.88,0.016,0.15,"rgba(4,11,5,0.95)"],
+        [0.79,0.024,0.17,"rgba(5,13,6,0.88)"],
+        [0.71,0.033,0.16,"rgba(7,16,8,0.78)"]
       ] as [number,number,number,string][]).forEach(([yf,fr,amp,col])=>{
-        ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(0,H);
-        for(let x=0;x<=W;x+=4){const y=H*yf-Math.abs(Math.sin(x*fr))*H*amp-Math.abs(Math.sin(x*fr*1.8+0.4))*H*amp*0.4;ctx.lineTo(x,y);}
-        ctx.lineTo(W,H);ctx.closePath();ctx.fill();
+        ctx.fillStyle=col; ctx.beginPath(); ctx.moveTo(0,H);
+        for(let x=0;x<=W;x+=4){const y=H*yf-Math.abs(Math.sin(x*fr))*H*amp-Math.abs(Math.sin(x*fr*1.8+0.4))*H*amp*0.4; ctx.lineTo(x,y);}
+        ctx.lineTo(W,H); ctx.closePath(); ctx.fill();
       });
 
-      // Birds
       if(t>60){
-        const ba=Math.min(1,(t-120)/60);
-        flocks.forEach((flock,fi)=>{
+        const ba=Math.min(1,(t-60)/40);
+        flocks.forEach(flock=>{
           flock.forEach(b=>{
             b.x+=b.sp;
-            if(b.x<W+50)drawBird(b.x,b.y+Math.sin(t*0.042+b.ph)*2.5,b.sz,t*0.14+b.ph,ba);
+            if(b.x<W+50) drawBird(b.x, b.y+Math.sin(t*0.042+b.ph)*2.5, b.sz, t*0.14+b.ph, ba);
           });
         });
       }
 
-      // Logo fade in
-      const logoEl = document.getElementById("lc-logo");
-      if(logoEl){
-        if(t>110) logoEl.style.opacity = String(Math.min(1,(t-110)/25));
-      }
+      const prog=Math.min(100,Math.floor((t/200)*100));
+      const barEl=document.getElementById("lc-bar");
+      const pctEl=document.getElementById("lc-pct");
+      if(barEl) barEl.style.width=prog+"%";
+      if(pctEl) pctEl.textContent=prog+"%";
 
-      // Done — fade out whole screen
-      // Progress bar
-      const barEl = document.getElementById("lc-bar");
-      const pctEl = document.getElementById("lc-pct");
-      const prog = Math.min(100, Math.floor((t/200)*100));
-      if(barEl) barEl.style.width = prog+"%";
-      if(pctEl) pctEl.textContent = prog+"%";
+      const logoEl=document.getElementById("lc-logo");
+      if(logoEl && t>110) logoEl.style.opacity=String(Math.min(1,(t-110)/25));
 
       if(full>0.98){
-        const el = document.getElementById("lc-wrap");
-        if(el && el.style.opacity !== "0"){
+        const el=document.getElementById("lc-wrap");
+        if(el && el.style.opacity!=="0"){
           el.style.transition="opacity 0.5s ease";
           el.style.opacity="0";
-          setTimeout(onDone, 500);
+          setTimeout(onDone,500);
         }
       }
-
-      animId = requestAnimationFrame(draw);
+      animId=requestAnimationFrame(draw);
     }
-    animId = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(animId);
+    animId=requestAnimationFrame(draw);
+    return ()=>cancelAnimationFrame(animId);
+  },[]);
+
+      return () => cancelAnimationFrame(animId);
   }, []);
 
   return (
