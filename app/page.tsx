@@ -323,35 +323,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Parallax hero
-    const handleParallax = () => {
-      const el = document.getElementById("hero-parallax");
-      if(el) {
-        const y = window.scrollY;
-        el.style.transform = `translateY(${y * 0.25}px)`;
-      }
-    };
-    window.addEventListener("scroll", handleParallax, {passive:true});
-
-    // Reveal on scroll
-    const revealEls = document.querySelectorAll(".reveal-el");
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if(e.isIntersecting) {
-          e.target.classList.add("visible");
-          revealObserver.unobserve(e.target);
-        }
-      });
-    }, {threshold:0.12, rootMargin:"0px 0px -40px 0px"});
-    revealEls.forEach(el => revealObserver.observe(el));
-
-    return () => {
-      window.removeEventListener("scroll", handleParallax);
-      revealObserver.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -465,19 +436,6 @@ export default function Home() {
         .logo-main{animation:fade-up 0.8s ease 0.15s both}
         .logo-line{width:0;height:1px;background:linear-gradient(90deg,transparent,#B89A6A,transparent);animation:expand-line 1.8s ease 0.3s forwards}
         .logo-sub-txt{animation:fade-up 0.8s ease 0.3s both}
-        .hero-parallax{will-change:transform;transition:transform 0.1s linear}
-        .reveal-el{opacity:0;transform:translateY(35px);transition:opacity 0.9s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94)}
-        .reveal-el.visible{opacity:1;transform:translateY(0)}
-        .reveal-el.delay-1{transition-delay:0.1s}
-        .reveal-el.delay-2{transition-delay:0.22s}
-        .reveal-el.delay-3{transition-delay:0.34s}
-        .reveal-el.delay-4{transition-delay:0.46s}
-        @keyframes sway{0%,100%{transform:rotate(-1.5deg) translateY(0)}50%{transform:rotate(1.5deg) translateY(-6px)}}
-        @keyframes sway2{0%,100%{transform:rotate(1deg) translateY(-3px)}50%{transform:rotate(-2deg) translateY(3px)}}
-        @keyframes sway3{0%,100%{transform:rotate(0.5deg) translateX(0)}50%{transform:rotate(-1deg) translateX(4px)}}
-        .bot-1{animation:sway 6s ease-in-out infinite;transform-origin:bottom center}
-        .bot-2{animation:sway2 8s ease-in-out infinite;transform-origin:bottom right}
-        .bot-3{animation:sway3 7s ease-in-out infinite 1s;transform-origin:top left}
         @keyframes liq1{0%,100%{width:28px}50%{width:22px}}
         @keyframes liq2{0%,100%{width:20px}50%{width:14px;transform:translateX(4px)}}
         @keyframes liq3{0%,100%{width:28px}50%{width:24px}}
@@ -564,7 +522,7 @@ export default function Home() {
         <div style={{position:"absolute",top:0,bottom:0,left:0,width:"20%",background:"linear-gradient(90deg,rgba(0,0,0,0.3) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
         <div style={{position:"absolute",top:0,bottom:0,right:0,width:"20%",background:"linear-gradient(270deg,rgba(0,0,0,0.3) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
         <canvas id="cloud-canvas" style={{position:"absolute",inset:0,width:"100%",height:"100%",zIndex:2,mixBlendMode:"screen",opacity:0.85,imageRendering:"auto"} as React.CSSProperties}/>
-        <div id="hero-parallax" className="hero-parallax" style={{...S.heroContent,position:"relative" as const,zIndex:3}}>
+        <div style={S.heroContent}>
           <h1 className="hero-title hero-title-mobile" style={S.heroTitle}>
             PENZION<span style={S.heroTitleItalic}>U ŠTĚSTÍ</span>
           </h1>
@@ -582,9 +540,9 @@ export default function Home() {
       {/* EDITORIAL */}
       <section id="o-penzionu" className="editorial-grid" style={S.editorial}>
         <div>
-          <p className="reveal-el" style={S.eyebrow}>Náš příběh</p>
+          <p style={S.eyebrow}>Náš příběh</p>
           <h2 style={S.sectionTitle}>
-            <span className="reveal-el delay-1" style={{display:"block"}}>Objevte místo,</span><span className="reveal-el delay-2" style={{display:"block"}}>kde čas plyne</span><span className="reveal-el delay-3" style={{display:"block"}}><em style={{color:"#B89A6A"}}>pomaleji.</em></span>
+            Objevte místo,<br/>kde čas plyne<br/><em style={{color:"#B89A6A"}}>pomaleji.</em>
           </h2>
           <div style={S.divider}/>
           <p style={S.bodyText}>
@@ -593,19 +551,6 @@ export default function Home() {
           </p>
         </div>
         <div style={{position:"relative",display:"flex",justifyContent:"center"}}>
-          <svg className="bot-1" style={{position:"absolute",top:-60,right:-40,opacity:0.07,pointerEvents:"none",zIndex:0,overflow:"visible"}} width="180" height="300" viewBox="0 0 180 300" fill="none">
-            <path d="M90 290 Q90 150 90 20" stroke="#0F241D" strokeWidth="1.5" fill="none"/>
-            <path d="M90 240 Q50 210 25 170" stroke="#0F241D" strokeWidth="1.2" fill="none"/>
-            <path d="M90 230 Q130 200 155 160" stroke="#0F241D" strokeWidth="1.2" fill="none"/>
-            <path d="M90 195 Q55 170 32 138" stroke="#0F241D" strokeWidth="1" fill="none"/>
-            <path d="M90 185 Q125 160 148 128" stroke="#0F241D" strokeWidth="1" fill="none"/>
-            <path d="M90 155 Q58 134 38 105" stroke="#0F241D" strokeWidth="0.8" fill="none"/>
-            <path d="M90 145 Q122 124 142 95" stroke="#0F241D" strokeWidth="0.8" fill="none"/>
-            <ellipse cx="27" cy="168" rx="22" ry="10" stroke="#0F241D" strokeWidth="0.8" transform="rotate(-25 27 168)" fill="none"/>
-            <ellipse cx="153" cy="158" rx="22" ry="10" stroke="#0F241D" strokeWidth="0.8" transform="rotate(25 153 158)" fill="none"/>
-            <ellipse cx="34" cy="135" rx="18" ry="8" stroke="#0F241D" strokeWidth="0.7" transform="rotate(-20 34 135)" fill="none"/>
-            <ellipse cx="146" cy="125" rx="18" ry="8" stroke="#0F241D" strokeWidth="0.7" transform="rotate(20 146 125)" fill="none"/>
-          </svg>
           <div style={S.polaroid}>
             <img src="/images/exterior.jpg" alt="Penzion" style={S.polaroidImg}/>
             <p style={S.polaroidCaption}>U Štěstí, Český ráj</p>
@@ -637,15 +582,6 @@ export default function Home() {
             ))}
           </div>
           <button style={S.btnPrimary}>ZOBRAZIT POKOJE</button>
-          <svg className="bot-2" style={{position:"absolute",bottom:-20,right:-30,opacity:0.05,pointerEvents:"none",overflow:"visible"}} width="140" height="200" viewBox="0 0 140 200" fill="none">
-            <path d="M70 190 Q70 100 70 15" stroke="#0F241D" strokeWidth="1.5" fill="none"/>
-            <path d="M70 160 Q35 138 15 108" stroke="#0F241D" strokeWidth="1.2" fill="none"/>
-            <path d="M70 150 Q105 128 125 98" stroke="#0F241D" strokeWidth="1.2" fill="none"/>
-            <path d="M70 125 Q40 106 22 80" stroke="#0F241D" strokeWidth="1" fill="none"/>
-            <path d="M70 115 Q100 96 118 70" stroke="#0F241D" strokeWidth="1" fill="none"/>
-            <ellipse cx="17" cy="106" rx="18" ry="8" stroke="#0F241D" strokeWidth="0.8" transform="rotate(-20 17 106)" fill="none"/>
-            <ellipse cx="123" cy="96" rx="18" ry="8" stroke="#0F241D" strokeWidth="0.8" transform="rotate(20 123 96)" fill="none"/>
-          </svg>
         </div>
       </section>
 
@@ -828,17 +764,6 @@ export default function Home() {
           ))}
         </div>
         <LeafletMap/>
-        <svg className="bot-3" style={{position:"absolute",right:"3rem",bottom:"2rem",opacity:0.05,pointerEvents:"none",overflow:"visible"}} width="160" height="250" viewBox="0 0 160 250" fill="none">
-          <path d="M80 240 Q80 125 80 20" stroke="#0F241D" strokeWidth="1.5" fill="none"/>
-          <path d="M80 200 Q42 175 20 140" stroke="#0F241D" strokeWidth="1.2" fill="none"/>
-          <path d="M80 188 Q118 163 140 128" stroke="#0F241D" strokeWidth="1.2" fill="none"/>
-          <path d="M80 160 Q46 138 26 108" stroke="#0F241D" strokeWidth="1" fill="none"/>
-          <path d="M80 150 Q114 128 134 98" stroke="#0F241D" strokeWidth="1" fill="none"/>
-          <ellipse cx="22" cy="138" rx="20" ry="9" stroke="#0F241D" strokeWidth="0.8" transform="rotate(-22 22 138)" fill="none"/>
-          <ellipse cx="138" cy="126" rx="20" ry="9" stroke="#0F241D" strokeWidth="0.8" transform="rotate(22 138 126)" fill="none"/>
-          <ellipse cx="28" cy="106" rx="16" ry="7" stroke="#0F241D" strokeWidth="0.7" transform="rotate(-18 28 106)" fill="none"/>
-          <ellipse cx="132" cy="96" rx="16" ry="7" stroke="#0F241D" strokeWidth="0.7" transform="rotate(18 132 96)" fill="none"/>
-        </svg>
       </section>
       {/* FOOTER */}
       <footer id="kontakt" style={{background:"#0F241D",color:"#F6F1E8",position:"relative" as const,overflow:"hidden"}}>
