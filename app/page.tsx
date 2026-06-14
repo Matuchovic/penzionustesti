@@ -180,11 +180,8 @@ function MapCanvas() {
     const particles=Array.from({length:30},()=>{const a=Math.random()*Math.PI*2,d=15+Math.random()*200;return{x:CX+Math.cos(a)*d*1.5,y:CY+Math.sin(a)*d*0.75,s:0.5+Math.random()*1.5,sp:0.001+Math.random()*0.0015,o:Math.random()*Math.PI*2,dr:Math.random()*Math.PI*2};});
 
     let t2=0;let animId:number;
-    let lastTime=0;
-    function draw(ts:number=0){
-      const delta=Math.min(ts-lastTime,50);
-      lastTime=ts;
-      t+=delta>0?delta/12:1;
+    function draw(){
+      t2++;
       c3.clearRect(0,0,W,H);
       const sy=(t2*0.035)%H;
       const sg=c3.createLinearGradient(0,sy-30,0,sy+30);
