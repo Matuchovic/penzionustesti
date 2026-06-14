@@ -1,6 +1,93 @@
 "use client";
 import { useEffect, useState } from "react";
 
+
+function CloudCanvas() {
+  useEffect(() => {
+    const canvas = document.getElementById("cloud-canvas") as HTMLCanvasElement;
+    if (!canvas) return;
+    const parent = canvas.parentElement;
+    if (!parent) return;
+
+    const W = Math.floor(parent.offsetWidth * 0.3);
+    const H = Math.floor(parent.offsetHeight * 0.3);
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext("2d")!;
+    const imgData = ctx.createImageData(W, H);
+    const data = imgData.data;
+
+    // Permutation table
+    const perm = new Uint8Array(512);
+    const p = new Uint8Array(256);
+    for (let i = 0; i < 256; i++) p[i] = i;
+    for (let i = 255; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [p[i], p[j]] = [p[j], p[i]];
+    }
+    for (let i = 0; i < 512; i++) perm[i] = p[i & 255];
+
+    const grad3 = [[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];
+    const fade = (t: number) => t*t*t*(t*(t*6-15)+10);
+    const lerp = (a: number, b: number, t: number) => a+t*(b-a);
+    const dot2 = (g: number[], x: number, y: number) => g[0]*x+g[1]*y;
+
+    function noise2(x: number, y: number): number {
+      const X=Math.floor(x)&255, Y=Math.floor(y)&255;
+      const xf=x-Math.floor(x), yf=y-Math.floor(y);
+      const u=fade(xf), v=fade(yf);
+      const a=perm[X]+Y, b=perm[X+1]+Y;
+      return lerp(
+        lerp(dot2(grad3[perm[a]%8],xf,yf),dot2(grad3[perm[b]%8],xf-1,yf),u),
+        lerp(dot2(grad3[perm[a+1]%8],xf,yf-1),dot2(grad3[perm[b+1]%8],xf-1,yf-1),u),
+        v
+      );
+    }
+
+    function fbm(x: number, y: number, oct: number): number {
+      let v=0,amp=0.5,freq=1,max=0;
+      for(let i=0;i<oct;i++){v+=noise2(x*freq,y*freq)*amp;max+=amp;amp*=0.5;freq*=2;}
+      return v/max;
+    }
+
+    let t = 0;
+    let animId: number;
+
+    function draw() {
+      const speed = t * 0.00012;
+      for (let y = 0; y < H; y++) {
+        const yy = y/H;
+        const vm1 = Math.pow(Math.max(0,1-Math.abs(yy-0.3)*2.8),0.5);
+        const vm2 = Math.pow(Math.max(0,1-Math.abs(yy-0.62)*3.2),0.5);
+        const vm = Math.max(vm1, vm2*0.75);
+        for (let x = 0; x < W; x++) {
+          const xx = x/W;
+          const nx = xx*2.8+speed;
+          const ny = yy*1.8+speed*0.3;
+          const wx = fbm(nx+1.7,ny+9.2,3)*0.7;
+          const wy = fbm(nx+8.3,ny+2.8,3)*0.7;
+          let n = fbm(nx+wx,ny+wy,5);
+          let d = Math.max(0,(n-0.12)/(0.65-0.12));
+          d = Math.pow(d,1.3)*vm;
+          d = Math.min(1,d*1.9);
+          const i4 = (y*W+x)*4;
+          data[i4]   = 210+d*45;
+          data[i4+1] = 218+d*37;
+          data[i4+2] = 205+d*40;
+          data[i4+3] = Math.floor(d*220);
+        }
+      }
+      ctx.putImageData(imgData,0,0);
+      t += 16;
+      animId = requestAnimationFrame(draw);
+    }
+
+    draw();
+    return () => cancelAnimationFrame(animId);
+  }, []);
+  return null;
+}
+
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [activeRoom, setActiveRoom] = useState(0);
@@ -209,6 +296,7 @@ export default function Home() {
         <div style={{position:"absolute",bottom:0,left:0,right:0,height:"40%",background:"linear-gradient(0deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.25) 50%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
         <div style={{position:"absolute",top:0,bottom:0,left:0,width:"20%",background:"linear-gradient(90deg,rgba(0,0,0,0.3) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
         <div style={{position:"absolute",top:0,bottom:0,right:0,width:"20%",background:"linear-gradient(270deg,rgba(0,0,0,0.3) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
+        <canvas id="cloud-canvas" style={{position:"absolute",inset:0,width:"100%",height:"100%",zIndex:2,mixBlendMode:"screen",opacity:0.85,imageRendering:"pixelated"} as React.CSSProperties}/>
         <div style={S.heroContent}>
           <h1 className="hero-title hero-title-mobile" style={S.heroTitle}>
             PENZION<span style={S.heroTitleItalic}>U ŠTĚSTÍ</span>
@@ -223,7 +311,7 @@ export default function Home() {
           SCROLLUJTE DOLŮ
         </div>
       </section>
-
+      <CloudCanvas/>
       {/* EDITORIAL */}
       <section id="o-penzionu" className="editorial-grid" style={S.editorial}>
         <div>
