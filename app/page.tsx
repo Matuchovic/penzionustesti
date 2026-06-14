@@ -310,11 +310,167 @@ function CloudCanvas() {
   return null;
 }
 
+
+function LoadingScreen({onDone}: {onDone: ()=>void}) {
+  useEffect(() => {
+    const c = document.getElementById("lc-canvas") as HTMLCanvasElement;
+    if(!c) return;
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+    const ctx = c.getContext("2d")!;
+    const W = c.width, H = c.height;
+    let t = 0;
+    let animId: number;
+
+    const stars = Array.from({length:120}, () => ({
+      x: Math.random()*W, y: Math.random()*H*0.65,
+      r: 0.2+Math.random()*1.1, tw: Math.random()*Math.PI*2, sp: 0.015+Math.random()*0.025
+    }));
+
+    const flocks = [
+      Array.from({length:10}, (_,i) => ({x:-25-i*32, y:H*0.22+i*7+Math.sin(i)*12, sp:1.0+Math.random()*0.5, ph:i*0.45, sz:0.6+Math.random()*0.2})),
+      Array.from({length:7},  (_,i) => ({x:-80-i*38, y:H*0.30+i*6, sp:0.7+Math.random()*0.3, ph:i*0.6+1.2, sz:0.45+Math.random()*0.15})),
+      Array.from({length:5},  (_,i) => ({x:-50-i*45, y:H*0.18+i*8, sp:1.2+Math.random()*0.4, ph:i*0.55+2.1, sz:0.35+Math.random()*0.1})),
+    ];
+
+    function drawBird(x:number,y:number,s:number,wt:number,a:number){
+      ctx.beginPath();
+      ctx.moveTo(x,y);ctx.quadraticCurveTo(x-s*9,y-Math.sin(wt)*s*4.5,x-s*18,y);
+      ctx.moveTo(x,y);ctx.quadraticCurveTo(x+s*9,y-Math.sin(wt+0.22)*s*4,x+s*18,y);
+      ctx.strokeStyle=`rgba(${Math.floor(8+a*7)},${Math.floor(18+a*12)},${Math.floor(10+a*8)},${0.6+a*0.3})`;
+      ctx.lineWidth=0.9;ctx.stroke();
+    }
+
+    function draw(){
+      const night = Math.max(0, 1-t/280);
+      const dawn  = Math.min(1, Math.max(0,(t-80)/220));
+      const full  = Math.min(1, Math.max(0,(t-240)/80));
+
+      // Sky gradient night→dawn
+      const g = ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,   `rgb(${Math.floor(2+dawn*25)},${Math.floor(5+dawn*28)},${Math.floor(18+dawn*12)})`);
+      g.addColorStop(0.35,`rgb(${Math.floor(5+dawn*35)},${Math.floor(12+dawn*35)},${Math.floor(22+dawn*10)})`);
+      g.addColorStop(0.7, `rgb(${Math.floor(8+dawn*45)},${Math.floor(18+dawn*40)},${Math.floor(15+dawn*8)})`);
+      g.addColorStop(1,   `rgb(3,8,4)`);
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+
+      // Stars fading out
+      if(night>0.05){
+        stars.forEach(s=>{
+          s.tw+=s.sp;
+          const a=night*(0.25+Math.sin(s.tw)*0.18);
+          ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+          ctx.fillStyle=`rgba(220,215,205,${Math.max(0,a)})`;ctx.fill();
+        });
+      }
+
+      // Moon fading
+      if(night>0.2){
+        const mx=W*0.25, my=H*0.15;
+        const mg=ctx.createRadialGradient(mx,my,0,mx,my,30);
+        mg.addColorStop(0,`rgba(230,220,200,${night*0.5})`);
+        mg.addColorStop(0.4,`rgba(200,190,170,${night*0.15})`);
+        mg.addColorStop(1,'rgba(200,190,170,0)');
+        ctx.fillStyle=mg;ctx.fillRect(0,0,W,H);
+        ctx.beginPath();ctx.arc(mx,my,night*12,0,Math.PI*2);
+        ctx.fillStyle=`rgba(235,228,210,${night*0.55})`;ctx.fill();
+      }
+
+      // Dawn sun glow
+      if(dawn>0){
+        const sx=W*0.58, sy=H*(0.28-dawn*0.06);
+        const sg=ctx.createRadialGradient(sx,sy,0,sx,sy,H*0.55);
+        sg.addColorStop(0,`rgba(255,185,80,${dawn*0.22})`);
+        sg.addColorStop(0.25,`rgba(255,140,50,${dawn*0.09})`);
+        sg.addColorStop(0.6,`rgba(220,100,30,${dawn*0.04})`);
+        sg.addColorStop(1,'rgba(220,80,20,0)');
+        ctx.fillStyle=sg;ctx.fillRect(0,0,W,H);
+        if(dawn>0.4){
+          const sa=(dawn-0.4)/0.6;
+          ctx.beginPath();ctx.arc(sx,sy,sa*14,0,Math.PI*2);
+          ctx.fillStyle=`rgba(255,215,130,${sa*0.55})`;ctx.fill();
+          const halo=ctx.createRadialGradient(sx,sy,sa*14,sx,sy,sa*35);
+          halo.addColorStop(0,`rgba(255,200,100,${sa*0.2})`);
+          halo.addColorStop(1,'rgba(255,200,100,0)');
+          ctx.fillStyle=halo;ctx.fillRect(0,0,W,H);
+        }
+      }
+
+      // Fog layers
+      for(let i=0;i<4;i++){
+        const fy=H*(0.5+i*0.08);
+        const fc=Math.floor(160+dawn*30);
+        const fo=0.04+dawn*0.04+Math.sin(t*0.013+i)*0.015;
+        const fg=ctx.createLinearGradient(0,fy-20,0,fy+30);
+        fg.addColorStop(0,`rgba(${fc},${fc+8},${fc-4},0)`);
+        fg.addColorStop(0.5,`rgba(${fc},${fc+8},${fc-4},${fo})`);
+        fg.addColorStop(1,`rgba(${fc},${fc+8},${fc-4},0)`);
+        ctx.fillStyle=fg;
+        ctx.beginPath();
+        for(let x=0;x<=W;x+=5){const y=fy+Math.sin(x*0.012+t*0.015+i*1.4)*9;x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+        ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
+      }
+
+      // Forest silhouette layers
+      [[0.97,0.010,0.12,'rgba(3,9,4,1)'],[0.88,0.016,0.15,'rgba(4,11,5,0.95)'],[0.79,0.024,0.17,'rgba(5,13,6,0.88)'],[0.71,0.033,0.16,'rgba(7,16,8,0.78)']].forEach(([yf,fr,amp,col])=>{
+        ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(0,H);
+        for(let x=0;x<=W;x+=4){const y=H*yf-Math.abs(Math.sin(x*fr))*H*amp-Math.abs(Math.sin(x*fr*1.8+0.4))*H*amp*0.4;ctx.lineTo(x,y);}
+        ctx.lineTo(W,H);ctx.closePath();ctx.fill();
+      });
+
+      // Birds
+      if(t>120){
+        const ba=Math.min(1,(t-120)/60);
+        flocks.forEach((flock,fi)=>{
+          flock.forEach(b=>{
+            b.x+=b.sp;
+            if(b.x<W+50)drawBird(b.x,b.y+Math.sin(t*0.042+b.ph)*2.5,b.sz,t*0.14+b.ph,ba);
+          });
+        });
+      }
+
+      // Logo fade in
+      const logoEl = document.getElementById("lc-logo");
+      if(logoEl){
+        if(t>260) logoEl.style.opacity = String(Math.min(1,(t-260)/60));
+      }
+
+      // Done — fade out whole screen
+      if(full>0.98){
+        const el = document.getElementById("lc-wrap");
+        if(el && el.style.opacity !== "0"){
+          el.style.transition="opacity 0.8s ease";
+          el.style.opacity="0";
+          setTimeout(onDone, 800);
+        }
+      }
+
+      t++;
+      animId = requestAnimationFrame(draw);
+    }
+    draw();
+    return () => cancelAnimationFrame(animId);
+  }, []);
+
+  return (
+    <div id="lc-wrap" style={{position:"fixed" as const,inset:0,zIndex:9999,opacity:1}}>
+      <canvas id="lc-canvas" style={{position:"absolute" as const,inset:0,width:"100%",height:"100%"}}/>
+      <div id="lc-logo" style={{position:"absolute" as const,inset:0,display:"flex",flexDirection:"column" as const,alignItems:"center",justifyContent:"center",opacity:0,zIndex:2,textAlign:"center" as const}}>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2rem,5vw,3.5rem)",fontWeight:300,color:"#F6F1E8",lineHeight:0.9,letterSpacing:"0.02em"}}>PENZION</div>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2rem,5vw,3.5rem)",fontStyle:"italic",color:"#B89A6A",lineHeight:0.9}}>U Štěstí</div>
+        <div style={{width:60,height:1,background:"linear-gradient(90deg,transparent,rgba(184,154,106,0.7),transparent)",margin:"1rem auto"}}/>
+        <div style={{fontFamily:"'Inter',sans-serif",fontSize:"0.5rem",letterSpacing:"0.4em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.5)"}}>Český ráj · Dobšín</div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [activeRoom, setActiveRoom] = useState(0);
   const [activeDest, setActiveDest] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -418,6 +574,7 @@ export default function Home() {
 
   return (
     <>
+      {loading && <LoadingScreen onDone={()=>setLoading(false)}/>}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
