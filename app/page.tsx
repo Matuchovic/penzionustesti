@@ -332,41 +332,94 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer id="kontakt" style={S.footer}>
-        <div className="footer-grid-mobile" style={S.footerGrid}>
-          <div>
-            <div style={S.footerLogoName}>PENZION U ŠTĚSTÍ</div>
-            <div style={S.footerLogoSub}>Český ráj</div>
-            <p style={S.footerDesc}>Klidné místo obklopené přírodou Českého ráje. Rovensko pod Troskami — ideální destinace pro odpočinek a dobrodružství.</p>
-            <div style={S.socialRow}>
-              {["f","✦","in"].map(s=><div key={s} style={S.socialBtn}>{s}</div>)}
+      <footer id="kontakt" style={{background:"#0F241D",color:"#F6F1E8",position:"relative" as const,overflow:"hidden"}}>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:"1px",background:"linear-gradient(90deg,transparent,rgba(184,154,106,0.4),transparent)"}}/>
+        <div style={{padding: isMobile ? "3rem 1.5rem 2rem" : "5rem 6rem 3rem"}}>
+          {isMobile ? (
+            <div style={{display:"flex",flexDirection:"column" as const,gap:"2.5rem"}}>
+              <div style={{textAlign:"center" as const}}>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"1.8rem",fontWeight:300,color:"#F6F1E8",letterSpacing:"0.1em"}}>PENZION</div>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"1.8rem",fontStyle:"italic",fontWeight:300,color:"#B89A6A",letterSpacing:"0.06em",marginTop:"-0.2rem"}}>U Štěstí</div>
+                <div style={{width:60,height:1,background:"linear-gradient(90deg,transparent,#B89A6A,transparent)",margin:"1rem auto"}}/>
+                <div style={{fontSize:"0.5rem",letterSpacing:"0.3em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.5)"}}>Český ráj · Rovensko pod Troskami</div>
+                <div style={{display:"flex",justifyContent:"center",gap:"0.75rem",marginTop:"1.5rem"}}>
+                  {["f","ig","in"].map(s=>(
+                    <div key={s} style={{width:38,height:38,border:"1px solid rgba(184,154,106,0.25)",display:"flex",alignItems:"center",justifyContent:"center",color:"rgba(239,231,218,0.4)",fontSize:"0.7rem",cursor:"pointer"}}>{s}</div>
+                  ))}
+                </div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"2rem"}}>
+                <div>
+                  <p style={{fontSize:"0.55rem",letterSpacing:"0.2em",textTransform:"uppercase" as const,color:"#B89A6A",marginBottom:"1.2rem",fontWeight:500}}>Kontakt</p>
+                  <p style={{fontSize:"0.85rem",color:"rgba(239,231,218,0.5)",marginBottom:"0.6rem",lineHeight:1.6}}>+420 123 456 789</p>
+                  <p style={{fontSize:"0.85rem",color:"rgba(239,231,218,0.5)",marginBottom:"0.6rem",lineHeight:1.6}}>info@penzionustesti.cz</p>
+                  <p style={{fontSize:"0.8rem",color:"rgba(239,231,218,0.4)",lineHeight:1.6}}>Rovensko pod Troskami 123, 512 63</p>
+                </div>
+                <div>
+                  <p style={{fontSize:"0.55rem",letterSpacing:"0.2em",textTransform:"uppercase" as const,color:"#B89A6A",marginBottom:"1.2rem",fontWeight:500}}>Menu</p>
+                  {["Pokoje","O penzionu","Český ráj","Galerie","Kontakt","Rezervace"].map(l=>(
+                    <a key={l} href="#" style={{fontSize:"0.85rem",color:"rgba(239,231,218,0.45)",display:"block",marginBottom:"0.6rem",letterSpacing:"0.02em"}}>{l}</a>
+                  ))}
+                </div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"0.4rem",borderRadius:"4px",overflow:"hidden"}}>
+                {["/images/hero.jpg","/images/pool.jpg","/images/room1.jpg","/images/garden.jpg"].map(src=>(
+                  <div key={src} style={{height:70,overflow:"hidden"}}>
+                    <img src={src} alt="" style={{width:"100%",height:"100%",objectFit:"cover" as const,opacity:0.55}}/>
+                  </div>
+                ))}
+              </div>
+              <div style={{borderTop:"1px solid rgba(215,195,164,0.1)",paddingTop:"1.5rem",display:"flex",flexDirection:"column" as const,alignItems:"center",gap:"0.5rem",textAlign:"center" as const}}>
+                <span style={{fontSize:"0.72rem",color:"rgba(239,231,218,0.2)"}}>© 2026 Penzion U Štěstí. Všechna práva vyhrazena.</span>
+              </div>
             </div>
-          </div>
-          <div>
-            <p style={S.footerHeading}>Kontakt</p>
-            <p style={S.footerLink}>+420 123 456 789</p>
-            <p style={S.footerLink}>info@penzionustesti.cz</p>
-            <p style={S.footerLink}>Rovensko pod Troskami 123</p>
-          </div>
-          <div>
-            <p style={S.footerHeading}>Rychlé odkazy</p>
-            {["Pokoje","O penzionu","Český ráj","Galerie","Kontakt","Rezervace"].map(l=>(
-              <a key={l} href="#" style={S.footerLink}>{l}</a>
-            ))}
-          </div>
-          <div>
-            <p style={S.footerHeading}>Sledujte nás</p>
-            <p style={{...S.footerDesc,marginBottom:"1rem"}}>#PenzionUStesti</p>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.4rem"}}>
-              {["/images/hero.jpg","/images/exterior.jpg","/images/room1.jpg","/images/garden.jpg"].map(src=>(
-                <div key={src} style={{height:60,overflow:"hidden"}}><img src={src} alt="" style={{width:"100%",height:"100%",objectFit:"cover" as const,opacity:0.5}}/></div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div style={S.footerBottom}>
-          <span>© 2024 Penzion U Štěstí. Všechna práva vyhrazena.</span>
-          <span>Vytvořeno s ❤ pro Český ráj</span>
+          ) : (
+            <>
+              <div style={{display:"grid",gridTemplateColumns:"1.8fr 1fr 1fr 1fr",gap:"4rem",marginBottom:"4rem",borderBottom:"1px solid rgba(215,195,164,0.1)",paddingBottom:"4rem"}}>
+                <div>
+                  <div style={{marginBottom:"1.5rem"}}>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"1.6rem",fontWeight:300,color:"#F6F1E8",letterSpacing:"0.1em",lineHeight:1}}>PENZION</div>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"1.6rem",fontStyle:"italic",fontWeight:300,color:"#B89A6A",letterSpacing:"0.06em",lineHeight:1}}>U Štěstí</div>
+                    <div style={{width:50,height:1,background:"linear-gradient(90deg,transparent,#B89A6A,transparent)",margin:"0.8rem 0"}}/>
+                    <div style={{fontSize:"0.48rem",letterSpacing:"0.25em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.4)"}}>Český ráj</div>
+                  </div>
+                  <p style={{fontSize:"0.85rem",color:"rgba(239,231,218,0.4)",lineHeight:1.9,maxWidth:280}}>Klidné místo obklopené přírodou Českého ráje. Rovensko pod Troskami — ideální destinace pro odpočinek a dobrodružství.</p>
+                  <div style={{display:"flex",gap:"0.75rem",marginTop:"1.5rem"}}>
+                    {["f","ig","in"].map(s=>(
+                      <div key={s} style={{width:38,height:38,border:"1px solid rgba(184,154,106,0.2)",display:"flex",alignItems:"center",justifyContent:"center",color:"rgba(239,231,218,0.35)",fontSize:"0.7rem",cursor:"pointer",transition:"all 0.3s"}}>{s}</div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p style={{fontSize:"0.55rem",letterSpacing:"0.22em",textTransform:"uppercase" as const,color:"#B89A6A",marginBottom:"1.5rem",fontWeight:500}}>Kontakt</p>
+                  <p style={{fontSize:"0.85rem",color:"rgba(239,231,218,0.45)",marginBottom:"0.8rem"}}>+420 123 456 789</p>
+                  <p style={{fontSize:"0.85rem",color:"rgba(239,231,218,0.45)",marginBottom:"0.8rem"}}>info@penzionustesti.cz</p>
+                  <p style={{fontSize:"0.82rem",color:"rgba(239,231,218,0.3)",lineHeight:1.6}}>Rovensko pod Troskami 123<br/>512 63</p>
+                </div>
+                <div>
+                  <p style={{fontSize:"0.55rem",letterSpacing:"0.22em",textTransform:"uppercase" as const,color:"#B89A6A",marginBottom:"1.5rem",fontWeight:500}}>Rychlé odkazy</p>
+                  {["Pokoje","O penzionu","Český ráj","Galerie","Kontakt","Rezervace"].map(l=>(
+                    <a key={l} href="#" style={{fontSize:"0.85rem",color:"rgba(239,231,218,0.4)",display:"block",marginBottom:"0.75rem",transition:"color 0.2s"}}>{l}</a>
+                  ))}
+                </div>
+                <div>
+                  <p style={{fontSize:"0.55rem",letterSpacing:"0.22em",textTransform:"uppercase" as const,color:"#B89A6A",marginBottom:"1.5rem",fontWeight:500}}>Sledujte nás</p>
+                  <p style={{fontSize:"0.75rem",color:"rgba(239,231,218,0.3)",marginBottom:"1rem",letterSpacing:"0.05em"}}>#PenzionUStesti</p>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.4rem"}}>
+                    {["/images/hero.jpg","/images/pool.jpg","/images/room1.jpg","/images/garden.jpg"].map(src=>(
+                      <div key={src} style={{height:65,overflow:"hidden",borderRadius:"2px"}}>
+                        <img src={src} alt="" style={{width:"100%",height:"100%",objectFit:"cover" as const,opacity:0.5}}/>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:"0.72rem",color:"rgba(239,231,218,0.2)"}}>
+                <span>© 2026 Penzion U Štěstí. Všechna práva vyhrazena.</span>
+                <span>Rovensko pod Troskami · Český ráj</span>
+              </div>
+            </>
+          )}
         </div>
       </footer>
     </>
