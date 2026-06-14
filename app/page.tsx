@@ -3,6 +3,98 @@ import { useEffect, useState } from "react";
 
 
 
+
+function LeafletMap() {
+  useEffect(() => {
+    if ((window as any)._leafletLoaded) return;
+    (window as any)._leafletLoaded = true;
+
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    document.head.appendChild(link);
+
+    const script = document.createElement("script");
+    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    script.onload = () => {
+      const L = (window as any).L;
+      const map = L.map("leaflet-map", {
+        center: [50.4982, 15.2350],
+        zoom: 13,
+        zoomControl: false,
+        attributionControl: false,
+        dragging: true,
+        scrollWheelZoom: false,
+      });
+
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        maxZoom: 19,
+      }).addTo(map);
+
+      // Apply night filter on tiles after load
+      map.on("tileload", () => {
+        document.querySelectorAll(".leaflet-tile").forEach((t: any) => {
+          t.style.filter = "brightness(0.45) saturate(0.3) hue-rotate(200deg)";
+        });
+      });
+      setTimeout(() => {
+        document.querySelectorAll(".leaflet-tile").forEach((t: any) => {
+          t.style.filter = "brightness(0.45) saturate(0.3) hue-rotate(200deg)";
+        });
+      }, 1000);
+
+      // Day toggle
+      document.getElementById("btn-day")?.addEventListener("click", () => {
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{maxZoom:19}).addTo(map);
+        setTimeout(()=>{document.querySelectorAll(".leaflet-tile").forEach((t:any)=>{t.style.filter="brightness(0.82) saturate(0.85)";});},500);
+      });
+
+      // Night toggle
+      document.getElementById("btn-night")?.addEventListener("click", () => {
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:19}).addTo(map);
+        setTimeout(()=>{document.querySelectorAll(".leaflet-tile").forEach((t:any)=>{t.style.filter="brightness(0.45) saturate(0.3) hue-rotate(200deg)";});},500);
+      });
+
+      // Main pin
+      const pinHtml = `
+        <div style="position:relative;display:flex;flex-direction:column;align-items:center">
+          <div class="pin-pulse" style="position:relative;width:46px;height:46px;border-radius:50%;background:rgba(10,21,16,0.96);border:2px solid rgba(184,154,106,0.85);display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(184,154,106,0.5),0 0 48px rgba(184,154,106,0.2)">
+            <span style="font-size:20px">🏡</span>
+          </div>
+          <div style="margin-top:7px;background:rgba(6,12,8,0.94);border:1px solid rgba(184,154,106,0.35);padding:5px 12px;white-space:nowrap;backdrop-filter:blur(10px)">
+            <div style="font-family:Cormorant Garamond,serif;font-style:italic;color:#F6F1E8;font-size:13px;text-align:center;line-height:1.2">Penzion U Štěstí</div>
+            <div style="font-family:Inter,sans-serif;font-size:7px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(184,154,106,0.6);text-align:center;margin-top:2px">Dobšín · Český ráj</div>
+          </div>
+        </div>`;
+      L.marker([50.4982,15.2350],{icon:L.divIcon({html:pinHtml,className:"",iconAnchor:[23,23],iconSize:[46,90]})}).addTo(map);
+
+      // POI markers
+      const pois = [
+        {lat:50.520,lng:15.255,name:"🏰 Hrad Trosky",sub:"Symbol Českého ráje"},
+        {lat:50.420,lng:15.258,name:"⛰ Prachovské skály",sub:"8 km od penzionu"},
+        {lat:50.497,lng:15.062,name:"🏙 Jičín",sub:"Město pohádek"},
+        {lat:50.589,lng:15.155,name:"🌊 Turnov",sub:"Centrum Českého ráje"},
+      ];
+      pois.forEach(p=>{
+        const html=`<div style="background:rgba(6,12,8,0.9);border:1px solid rgba(184,154,106,0.25);padding:4px 10px;white-space:nowrap;backdrop-filter:blur(8px);cursor:pointer">
+          <div style="font-family:Cormorant Garamond,serif;font-style:italic;color:rgba(184,154,106,0.9);font-size:11px">${p.name}</div>
+          <div style="font-family:Inter,sans-serif;font-size:7px;letter-spacing:0.1em;color:rgba(239,231,218,0.35)">${p.sub}</div>
+        </div>`;
+        L.marker([p.lat,p.lng],{icon:L.divIcon({html,className:"",iconAnchor:[40,14]})}).addTo(map);
+      });
+
+      // Coords live
+      setInterval(()=>{
+        const c=map.getCenter();
+        const el=document.getElementById("map-coords");
+        if(el) el.textContent=`${c.lat.toFixed(4)}° N · ${c.lng.toFixed(4)}° E · 342 m n.m.`;
+      },300);
+    };
+    document.head.appendChild(script);
+  }, []);
+  return null;
+}
+
 function MapCanvas() {
   useEffect(() => {
     const canvases = ["mc0","mc1","mc3"].map(id => document.getElementById(id) as HTMLCanvasElement);
@@ -617,34 +709,61 @@ export default function Home() {
           <p style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",color:"rgba(239,231,218,0.35)",fontSize:"0.85rem"}}>Rovensko pod Troskami · 512 63</p>
           <div style={{width:50,height:1,background:"linear-gradient(90deg,transparent,rgba(184,154,106,0.6),transparent)",margin:"0.7rem auto 0"}}/>
         </div>
-        <div style={{position:"relative" as const,width:"100%",height:isMobile?320:480}}>
-          <canvas id="mc0" style={{position:"absolute" as const,inset:0,width:"100%",height:"100%",zIndex:1}}/>
-          <canvas id="mc1" style={{position:"absolute" as const,inset:0,width:"100%",height:"100%",zIndex:2}}/>
-          <canvas id="mc3" style={{position:"absolute" as const,inset:0,width:"100%",height:"100%",zIndex:4}}/>
-          <div style={{position:"absolute" as const,top:0,left:0,right:0,height:80,background:"linear-gradient(180deg,#0a1510,transparent)",zIndex:10,pointerEvents:"none" as const}}/>
-          <div style={{position:"absolute" as const,bottom:0,left:0,right:0,height:80,background:"linear-gradient(0deg,#0a1510,transparent)",zIndex:10,pointerEvents:"none" as const}}/>
-          <div style={{position:"absolute" as const,top:0,left:0,bottom:0,width:80,background:"linear-gradient(90deg,#0a1510,transparent)",zIndex:10,pointerEvents:"none" as const}}/>
-          <div style={{position:"absolute" as const,top:0,right:0,bottom:0,width:80,background:"linear-gradient(270deg,#0a1510,transparent)",zIndex:10,pointerEvents:"none" as const}}/>
-          {["tl","tr","bl","br"].map(c=>(
-            <div key={c} style={{position:"absolute" as const,width:14,height:14,zIndex:20,pointerEvents:"none" as const,borderColor:"rgba(184,154,106,0.35)",borderStyle:"solid",borderWidth:c==="tl"?"1.5px 0 0 1.5px":c==="tr"?"1.5px 1.5px 0 0":c==="bl"?"0 0 1.5px 1.5px":"0 1.5px 1.5px 0",top:c.includes("t")?10:undefined,bottom:c.includes("b")?10:undefined,left:c.includes("l")?10:undefined,right:c.includes("r")?10:undefined}}/>
-          ))}
-          <div style={{position:"absolute" as const,right:isMobile?10:90,top:16,zIndex:20,display:"flex",flexDirection:"column" as const,gap:6,pointerEvents:"none" as const}}>
-            <div style={{background:"rgba(6,12,8,0.88)",border:"1px solid rgba(184,154,106,0.2)",padding:"5px 10px",backdropFilter:"blur(12px)"}}>
-              <div style={{fontSize:7,letterSpacing:"0.15em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.45)",fontFamily:"'Inter',sans-serif",marginBottom:3}}>Vzdálenosti</div>
+        <style>{`
+          .leaflet-container{background:#060c08!important}
+          .leaflet-tile{filter:brightness(0.85) saturate(0.9)}
+          .leaflet-control-zoom,.leaflet-control-attribution{display:none!important}
+          .map-night .leaflet-tile{filter:brightness(0.5) saturate(0.4) hue-rotate(180deg) invert(0.05)}
+          .map-day .leaflet-tile{filter:brightness(0.85) saturate(0.8)}
+          @keyframes pin-ring{0%{transform:scale(1);opacity:0.6}100%{transform:scale(2.5);opacity:0}}
+          .pin-pulse::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(184,154,106,0.6);animation:pin-ring 2s ease-out infinite}
+          .pin-pulse::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(184,154,106,0.4);animation:pin-ring 2s ease-out 0.5s infinite}
+          .toggle-btn{background:rgba(6,12,8,0.9);border:1px solid rgba(184,154,106,0.3);color:#F6F1E8;padding:6px 14px;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;backdrop-filter:blur(12px);transition:all 0.3s;display:flex;align-items:center;gap:6px}
+          .toggle-btn:hover{border-color:rgba(184,154,106,0.6);background:rgba(15,36,29,0.9)}
+          .toggle-btn.active{background:rgba(184,154,106,0.15);border-color:rgba(184,154,106,0.6)}
+        `}</style>
+        <div style={{position:"relative" as const,width:"100%",height:isMobile?340:500}}>
+          <div id="leaflet-map" style={{width:"100%",height:"100%"}}/>
+          <div style={{position:"absolute" as const,top:0,left:0,right:0,height:90,background:"linear-gradient(180deg,#0a1510,transparent)",zIndex:500,pointerEvents:"none" as const}}/>
+          <div style={{position:"absolute" as const,bottom:0,left:0,right:0,height:90,background:"linear-gradient(0deg,#0a1510,transparent)",zIndex:500,pointerEvents:"none" as const}}/>
+          <div style={{position:"absolute" as const,top:0,left:0,bottom:0,width:80,background:"linear-gradient(90deg,#0a1510,transparent)",zIndex:500,pointerEvents:"none" as const}}/>
+          <div style={{position:"absolute" as const,top:0,right:0,bottom:0,width:80,background:"linear-gradient(270deg,#0a1510,transparent)",zIndex:500,pointerEvents:"none" as const}}/>
+          <div style={{position:"absolute" as const,top:16,left:"50%",transform:"translateX(-50%)",zIndex:600,display:"flex",gap:4}}>
+            <button id="btn-night" className="toggle-btn active" onClick={()=>{
+              const m=document.getElementById('leaflet-map');
+              if(m){m.className='map-night';(window as any)._mapNight=true;}
+              const tiles=document.querySelectorAll('.leaflet-tile');
+              tiles.forEach((t:any)=>{t.style.filter='brightness(0.45) saturate(0.3) hue-rotate(200deg)';});
+              document.getElementById('btn-night')?.classList.add('active');
+              document.getElementById('btn-day')?.classList.remove('active');
+            }}>🌙 Noc</button>
+            <button id="btn-day" className="toggle-btn" onClick={()=>{
+              const tiles=document.querySelectorAll('.leaflet-tile');
+              tiles.forEach((t:any)=>{t.style.filter='brightness(0.88) saturate(0.85)';});
+              document.getElementById('btn-day')?.classList.add('active');
+              document.getElementById('btn-night')?.classList.remove('active');
+            }}>☀️ Den</button>
+          </div>
+          <div style={{position:"absolute" as const,right:isMobile?10:100,top:60,zIndex:600,display:"flex",flexDirection:"column" as const,gap:6,pointerEvents:"none" as const}}>
+            <div style={{background:"rgba(6,12,8,0.9)",border:"1px solid rgba(184,154,106,0.2)",padding:"6px 12px",backdropFilter:"blur(12px)"}}>
+              <div style={{fontSize:7,letterSpacing:"0.15em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.45)",fontFamily:"'Inter',sans-serif",marginBottom:4}}>Vzdálenosti</div>
               {[["Praha","88 km"],["Prachovské skály","8 km"],["Hrad Trosky","12 km"],["Turnov","18 km"]].map(([n,v])=>(
-                <div key={n} style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
+                <div key={n} style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
                   <span style={{fontSize:7,color:"rgba(184,154,106,0.5)",whiteSpace:"nowrap" as const,fontFamily:"'Inter',sans-serif"}}>{n}</span>
-                  <div style={{flex:1,height:1,background:"linear-gradient(90deg,rgba(184,154,106,0.3),transparent)"}}/>
+                  <div style={{flex:1,height:1,background:"linear-gradient(90deg,rgba(184,154,106,0.3),transparent)",minWidth:20}}/>
                   <span style={{fontSize:7,color:"rgba(239,231,218,0.7)",whiteSpace:"nowrap" as const,fontFamily:"'Inter',sans-serif"}}>{v}</span>
                 </div>
               ))}
             </div>
           </div>
-          <div style={{position:"absolute" as const,left:isMobile?10:90,bottom:16,zIndex:20,background:"rgba(6,12,8,0.85)",border:"1px solid rgba(184,154,106,0.15)",padding:"4px 10px",pointerEvents:"none" as const}}>
+          <div style={{position:"absolute" as const,left:isMobile?10:100,bottom:16,zIndex:600,background:"rgba(6,12,8,0.85)",border:"1px solid rgba(184,154,106,0.15)",padding:"4px 10px",pointerEvents:"none" as const}}>
             <div id="map-coords" style={{fontSize:7,letterSpacing:"0.12em",color:"rgba(184,154,106,0.4)",fontFamily:"'Inter',sans-serif"}}>50.4982° N · 15.2350° E · 342 m n.m.</div>
           </div>
+          {["tl","tr","bl","br"].map(c=>(
+            <div key={c} style={{position:"absolute" as const,width:14,height:14,zIndex:600,pointerEvents:"none" as const,borderColor:"rgba(184,154,106,0.35)",borderStyle:"solid",borderWidth:c==="tl"?"1.5px 0 0 1.5px":c==="tr"?"1.5px 1.5px 0 0":c==="bl"?"0 0 1.5px 1.5px":"0 1.5px 1.5px 0",top:c.includes("t")?10:undefined,bottom:c.includes("b")?10:undefined,left:c.includes("l")?10:undefined,right:c.includes("r")?10:undefined}}/>
+          ))}
         </div>
-        <MapCanvas/>
+        <LeafletMap/>
       </section>
       {/* FOOTER */}
       <footer id="kontakt" style={{background:"#0F241D",color:"#F6F1E8",position:"relative" as const,overflow:"hidden"}}>
