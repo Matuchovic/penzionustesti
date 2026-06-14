@@ -332,8 +332,8 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
     const c = document.getElementById("lc-canvas") as HTMLCanvasElement;
     if(!c) return;
     const dpr = Math.min(window.devicePixelRatio||1, 2);
-    const vw = document.documentElement.clientWidth || window.innerWidth;
-    const vh = document.documentElement.clientHeight || window.innerHeight;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
     c.width = vw*dpr; c.height = vh*dpr;
     c.style.width = vw+"px"; c.style.height = vh+"px";
     const ctx = c.getContext("2d")!;
@@ -475,7 +475,7 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
   },[]);
 
   return (
-    <div id="lc-wrap" style={{position:"fixed" as const,top:0,left:0,right:0,bottom:0,width:"100%",height:"100%",zIndex:9999,opacity:1,overflow:"hidden"}}>
+    <div id="lc-wrap" style={{position:"fixed" as const,top:0,left:0,right:0,bottom:0,width:"100vw",height:"100vh",zIndex:9999,opacity:1,overflow:"hidden"}}>
       <canvas id="lc-canvas" style={{position:"absolute" as const,top:0,left:0,display:"block"}}/>
       <div id="lc-logo" style={{position:"absolute" as const,top:0,left:0,right:0,bottom:0,display:"flex",flexDirection:"column" as const,alignItems:"center",justifyContent:"center",opacity:0,zIndex:2,textAlign:"center" as const,padding:"0 2rem",WebkitBackfaceVisibility:"hidden"} as React.CSSProperties}>
         <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(2.5rem,6vw,4rem)",fontWeight:300,color:"#F6F1E8",lineHeight:0.88,letterSpacing:"0.02em",textShadow:"0 4px 30px rgba(0,0,0,0.5)"}}>PENZION</div>
@@ -605,7 +605,6 @@ export default function Home() {
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; overflow-x: hidden; }
-        #lc-wrap { position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; }
         body { font-family: 'Inter', sans-serif; background: #F6F1E8; overflow-x: hidden; }
         img { display: block; max-width: 100%; }
         a { text-decoration: none; color: inherit; }
