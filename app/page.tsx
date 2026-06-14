@@ -26,7 +26,7 @@ export default function Home() {
   ];
 
   const S: Record<string, React.CSSProperties> = {
-    nav: { position:"fixed", top:0, left:0, right:0, zIndex:1000, display:"flex", alignItems:"center", justifyContent:"space-between", padding: scrolled ? "0.75rem 2.5rem" : "1.1rem 2.5rem", background: scrolled ? "rgba(0,0,0,0.55)" : "rgba(0,0,0,0.15)", backdropFilter:"blur(30px)", WebkitBackdropFilter:"blur(30px)", borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent", boxShadow: scrolled ? "0 0 40px rgba(184,154,106,0.06),0 8px 40px rgba(0,0,0,0.4)" : "none", transition:"all 0.5s ease" },
+    nav: { position:"fixed", top:0, left:0, right:0, zIndex:1000, display:"flex", alignItems:"center", justifyContent:"space-between", padding: scrolled ? "0.75rem 2.5rem" : "1.1rem 2.5rem", background: scrolled ? "rgba(5,15,8,0.85)" : "rgba(5,15,8,0.45)", backdropFilter:"blur(30px)", WebkitBackdropFilter:"blur(30px)", borderBottom:"1px solid rgba(184,154,106,0.12)", boxShadow: scrolled ? "0 0 40px rgba(184,154,106,0.08),0 8px 40px rgba(0,0,0,0.5)" : "0 2px 30px rgba(0,0,0,0.3)", transition:"all 0.5s ease" },
     logoWrap: { display:"flex", alignItems:"center", gap:"0.75rem" },
     logoText: { fontFamily:"'Cormorant Garamond',serif", fontSize:"0.95rem", fontWeight:500, letterSpacing:"0.08em", color:"#0F241D", lineHeight:1.2 },
     logoSub: { display:"block", fontSize:"0.65rem", letterSpacing:"0.15em", color:"#B89A6A", textTransform:"uppercase" as const },
