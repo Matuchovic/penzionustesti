@@ -412,7 +412,12 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
       }
 
       // Forest silhouette layers
-      [[0.97,0.010,0.12,'rgba(3,9,4,1)'],[0.88,0.016,0.15,'rgba(4,11,5,0.95)'],[0.79,0.024,0.17,'rgba(5,13,6,0.88)'],[0.71,0.033,0.16,'rgba(7,16,8,0.78)']].forEach(([yf,fr,amp,col])=>{
+      ([
+        [0.97,0.010,0.12,'rgba(3,9,4,1)'],
+        [0.88,0.016,0.15,'rgba(4,11,5,0.95)'],
+        [0.79,0.024,0.17,'rgba(5,13,6,0.88)'],
+        [0.71,0.033,0.16,'rgba(7,16,8,0.78)']
+      ] as [number,number,number,string][]).forEach(([yf,fr,amp,col])=>{
         ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(0,H);
         for(let x=0;x<=W;x+=4){const y=H*yf-Math.abs(Math.sin(x*fr))*H*amp-Math.abs(Math.sin(x*fr*1.8+0.4))*H*amp*0.4;ctx.lineTo(x,y);}
         ctx.lineTo(W,H);ctx.closePath();ctx.fill();
