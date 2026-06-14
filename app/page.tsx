@@ -118,14 +118,19 @@ export default function Home() {
 
       {/* NAV */}
       <nav style={S.nav}>
-        <div style={S.logoWrap}>
-          <div style={{width:36,height:36,borderRadius:"50%",background:"rgba(184,154,106,0.08)",border:"1px solid rgba(184,154,106,0.3)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 0 12px rgba(184,154,106,0.15)"}}>
-            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-              <path d="M14 4C14 4 8 8 8 14s6 10 6 10 6-4 6-10S14 4 14 4z" stroke="#B89A6A" strokeWidth="1.2"/>
-              <circle cx="14" cy="14" r="2" fill="#B89A6A" opacity="0.5"/>
-            </svg>
-          </div>
-          <div style={S.logoText}>PENZION<span style={S.logoSub}>U Štěstí</span></div>
+        <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"0.1rem",cursor:"pointer"}}>
+          <style>{`
+            @keyframes expand-line{to{width:90px}}
+            @keyframes fade-up{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+            .logo-top{animation:fade-up 0.8s ease 0s both}
+            .logo-main{animation:fade-up 0.8s ease 0.15s both}
+            .logo-line{width:0;height:1px;background:linear-gradient(90deg,transparent,#B89A6A,transparent);animation:expand-line 1.8s ease 0.3s forwards}
+            .logo-sub-txt{animation:fade-up 0.8s ease 0.3s both}
+          `}</style>
+          <div className="logo-top" style={{fontFamily:"'Inter',sans-serif",fontSize:"0.42rem",letterSpacing:"0.45em",textTransform:"uppercase",color:"rgba(184,154,106,0.6)",fontWeight:300}}>Penzion</div>
+          <div className="logo-main" style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"1.5rem",fontWeight:300,color:"#F6F1E8",letterSpacing:"0.04em",lineHeight:1}}>U <em style={{fontStyle:"italic",color:"#B89A6A"}}>Štěstí</em></div>
+          <div className="logo-line"></div>
+          <div className="logo-sub-txt" style={{fontFamily:"'Inter',sans-serif",fontSize:"0.38rem",letterSpacing:"0.38em",textTransform:"uppercase",color:"rgba(184,154,106,0.45)",fontWeight:300}}>Český ráj</div>
         </div>
         <ul style={S.navLinks}>
           {["Pokoje","O penzionu","Český ráj","Galerie","Kontakt"].map(item => (
