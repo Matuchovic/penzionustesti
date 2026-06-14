@@ -474,6 +474,9 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
     return ()=>cancelAnimationFrame(animId);
   },[]);
 
+      return () => cancelAnimationFrame(animId);
+  }, []);
+
   return (
     <div id="lc-wrap" style={{position:"fixed" as const,top:0,left:0,right:0,bottom:0,width:"100vw",height:"100vh",zIndex:9999,opacity:1,overflow:"hidden"}}>
       <canvas id="lc-canvas" style={{position:"absolute" as const,top:0,left:0,display:"block"}}/>
