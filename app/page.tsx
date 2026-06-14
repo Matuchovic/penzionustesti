@@ -26,12 +26,12 @@ export default function Home() {
   ];
 
   const S: Record<string, React.CSSProperties> = {
-    nav: { position:"fixed", top:0, left:0, right:0, zIndex:1000, display:"flex", alignItems:"center", justifyContent:"space-between", padding: scrolled ? "0.9rem 3rem" : "1.4rem 3rem", background: scrolled ? "rgba(246,241,232,0.92)" : "transparent", backdropFilter: scrolled ? "blur(16px)" : "none", borderBottom: scrolled ? "1px solid rgba(184,154,106,0.15)" : "none", transition:"all 0.4s ease" },
+    nav: { position:"fixed", top:0, left:0, right:0, zIndex:1000, display:"flex", alignItems:"center", justifyContent:"space-between", padding: scrolled ? "0.75rem 2.5rem" : "1.1rem 2.5rem", background: scrolled ? "rgba(0,0,0,0.55)" : "rgba(0,0,0,0.15)", backdropFilter:"blur(30px)", WebkitBackdropFilter:"blur(30px)", borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent", boxShadow: scrolled ? "0 0 40px rgba(184,154,106,0.06),0 8px 40px rgba(0,0,0,0.4)" : "none", transition:"all 0.5s ease" },
     logoWrap: { display:"flex", alignItems:"center", gap:"0.75rem" },
     logoText: { fontFamily:"'Cormorant Garamond',serif", fontSize:"0.95rem", fontWeight:500, letterSpacing:"0.08em", color:"#0F241D", lineHeight:1.2 },
     logoSub: { display:"block", fontSize:"0.65rem", letterSpacing:"0.15em", color:"#B89A6A", textTransform:"uppercase" as const },
     navLinks: { display:"flex", gap:"2.5rem", listStyle:"none" },
-    navLink: { fontSize:"0.72rem", letterSpacing:"0.12em", textTransform:"uppercase" as const, color: scrolled ? "#0F241D" : "#F6F1E8", fontWeight:400, transition:"color 0.3s" },
+    navLink: { fontSize:"0.6rem", letterSpacing:"0.13em", textTransform:"uppercase" as const, color:"rgba(246,241,232,0.55)", fontWeight:400, transition:"color 0.3s", padding:"0 1rem" },
     btnPrimary: { background:"#0F241D", color:"#F6F1E8", padding:"0.65rem 1.6rem", fontSize:"0.72rem", letterSpacing:"0.14em", textTransform:"uppercase" as const, fontWeight:500, border:"none", cursor:"pointer", fontFamily:"'Inter',sans-serif" },
     hero: { position:"relative" as const, height:"100vh", minHeight:700, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", background:"#0a1a14" },
     heroBg: { position:"absolute" as const, inset:0, backgroundImage:"url('/images/hero.jpg')", backgroundSize:"cover", backgroundPosition:"center", opacity:0.8 },
@@ -119,7 +119,7 @@ export default function Home() {
       {/* NAV */}
       <nav style={S.nav}>
         <div style={S.logoWrap}>
-          <div style={{width:44,height:44,borderRadius:"50%",border:"1.5px solid #B89A6A",display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <div style={{width:36,height:36,borderRadius:"50%",background:"rgba(184,154,106,0.08)",border:"1px solid rgba(184,154,106,0.3)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 0 12px rgba(184,154,106,0.15)"}}>
             <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
               <path d="M14 4C14 4 8 8 8 14s6 10 6 10 6-4 6-10S14 4 14 4z" stroke="#B89A6A" strokeWidth="1.2"/>
               <circle cx="14" cy="14" r="2" fill="#B89A6A" opacity="0.5"/>
@@ -132,7 +132,7 @@ export default function Home() {
             <li key={item}><a href={`#${item.toLowerCase().replace(" ","-")}`} style={S.navLink}>{item}</a></li>
           ))}
         </ul>
-        <button style={S.btnPrimary}>Rezervovat pobyt</button>
+        <button style={{background:"linear-gradient(135deg,rgba(184,154,106,0.2),rgba(184,154,106,0.08))",border:"1px solid rgba(184,154,106,0.3)",padding:"0.55rem 1.4rem",fontSize:"0.6rem",letterSpacing:"0.14em",textTransform:"uppercase",color:"#C9AA7A",cursor:"pointer",boxShadow:"0 0 20px rgba(184,154,106,0.1),inset 0 1px 0 rgba(255,255,255,0.05)",fontFamily:"'Inter',sans-serif",transition:"all 0.3s"}}>Rezervovat pobyt</button>
       </nav>
 
       {/* HERO */}
