@@ -350,11 +350,11 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
     ];
 
     function drawBird(x:number,y:number,s:number,wt:number,a:number){
-      ctx.beginPath();
-      ctx.moveTo(x,y);ctx.quadraticCurveTo(x-s*9,y-Math.sin(wt)*s*4.5,x-s*18,y);
-      ctx.moveTo(x,y);ctx.quadraticCurveTo(x+s*9,y-Math.sin(wt+0.22)*s*4,x+s*18,y);
-      ctx.strokeStyle=`rgba(${Math.floor(8+a*7)},${Math.floor(18+a*12)},${Math.floor(10+a*8)},${0.6+a*0.3})`;
-      ctx.lineWidth=0.9;ctx.stroke();
+      ctx2d.beginPath();
+      ctx2d.moveTo(x,y);ctx2d.quadraticCurveTo(x-s*9,y-Math.sin(wt)*s*4.5,x-s*18,y);
+      ctx2d.moveTo(x,y);ctx2d.quadraticCurveTo(x+s*9,y-Math.sin(wt+0.22)*s*4,x+s*18,y);
+      ctx2d.strokeStyle=`rgba(${Math.floor(8+a*7)},${Math.floor(18+a*12)},${Math.floor(10+a*8)},${0.6+a*0.3})`;
+      ctx2d.lineWidth=0.9;ctx2d.stroke();
     }
 
     let lastTime=0;
