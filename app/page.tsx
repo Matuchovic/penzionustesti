@@ -204,6 +204,11 @@ export default function Home() {
       <section style={S.hero}>
         <div style={S.heroBg}/>
         <div style={S.heroOverlay}/>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0.92) 100%)",zIndex:1,pointerEvents:"none"}}/>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:"35%",background:"linear-gradient(180deg,rgba(0,0,0,0.75) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
+        <div style={{position:"absolute",bottom:0,left:0,right:0,height:"40%",background:"linear-gradient(0deg,rgba(0,0,0,0.9) 0%,rgba(0,0,0,0.5) 50%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
+        <div style={{position:"absolute",top:0,bottom:0,left:0,width:"20%",background:"linear-gradient(90deg,rgba(0,0,0,0.7) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
+        <div style={{position:"absolute",top:0,bottom:0,right:0,width:"20%",background:"linear-gradient(270deg,rgba(0,0,0,0.7) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
         <div style={S.heroContent}>
           <h1 className="hero-title hero-title-mobile" style={S.heroTitle}>
             PENZION<span style={S.heroTitleItalic}>U ŠTĚSTÍ</span>
