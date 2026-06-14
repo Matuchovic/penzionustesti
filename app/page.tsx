@@ -478,7 +478,7 @@ export default function Home() {
       `}</style>
 
       {/* NAV */}
-      <nav style={{...S.nav,position:"relative" as const}}>
+      <nav style={S.nav}>
         <div className="nav-glow-line"/>
         <div className="nav-glow-dot"/>
         <div className="nav-glow-halo"/>
