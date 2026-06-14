@@ -446,6 +446,12 @@ export default function Home() {
         .liq-open1{animation:none!important;width:24px!important;transform:rotate(45deg) translate(5px,6px)!important;background:#B89A6A!important;box-shadow:0 0 12px rgba(184,154,106,0.9),0 0 28px rgba(184,154,106,0.4)!important}
         .liq-open2{animation:none!important;width:0!important;opacity:0!important}
         .liq-open3{animation:none!important;width:24px!important;transform:rotate(-45deg) translate(5px,-6px)!important;background:#B89A6A!important;box-shadow:0 0 12px rgba(184,154,106,0.9),0 0 28px rgba(184,154,106,0.4)!important}
+        @keyframes glow-travel{0%{left:-80px;opacity:0}8%{opacity:1}92%{opacity:1}100%{left:calc(100% + 80px);opacity:0}}
+        @keyframes glow-travel-glow{0%{left:-120px;opacity:0}8%{opacity:1}92%{opacity:0.7}100%{left:calc(100% + 120px);opacity:0}}
+        .nav-glow-line{position:absolute;bottom:0;left:0;right:0;height:1px;background:rgba(184,154,106,0.07)}
+        .nav-glow-dot{position:absolute;bottom:-1px;height:3px;width:70px;background:linear-gradient(90deg,transparent,rgba(184,154,106,0.95),rgba(220,195,150,1),rgba(184,154,106,0.95),transparent);border-radius:999px;animation:glow-travel 5s cubic-bezier(0.4,0,0.2,1) infinite;box-shadow:0 0 10px rgba(184,154,106,0.6)}
+        .nav-glow-halo{position:absolute;bottom:-6px;width:120px;height:12px;background:radial-gradient(ellipse,rgba(184,154,106,0.18),transparent 70%);border-radius:50%;animation:glow-travel-glow 5s cubic-bezier(0.4,0,0.2,1) infinite}
+        .nav-glow-dot2{position:absolute;bottom:-1px;height:2px;width:40px;background:linear-gradient(90deg,transparent,rgba(184,154,106,0.5),transparent);border-radius:999px;animation:glow-travel 5s cubic-bezier(0.4,0,0.2,1) 2.5s infinite}
         .nav-links-desktop { display: flex; }
         .nav-cta-desktop { display: block; }
         .hamburger { display: none; }
@@ -472,7 +478,11 @@ export default function Home() {
       `}</style>
 
       {/* NAV */}
-      <nav style={S.nav}>
+      <nav style={{...S.nav,position:"relative" as const}}>
+        <div className="nav-glow-line"/>
+        <div className="nav-glow-dot"/>
+        <div className="nav-glow-halo"/>
+        <div className="nav-glow-dot2"/>
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"0.1rem",cursor:"pointer"}}>
           <div className="logo-top" style={{fontFamily:"'Inter',sans-serif",fontSize:"0.42rem",letterSpacing:"0.45em",textTransform:"uppercase" as const,color:"rgba(184,154,106,0.6)",fontWeight:300}}>Penzion</div>
           <div className="logo-main" style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"1.5rem",fontWeight:300,color:"#F6F1E8",letterSpacing:"0.04em",lineHeight:1}}>U <em style={{fontStyle:"italic",color:"#B89A6A"}}>Štěstí</em></div>
