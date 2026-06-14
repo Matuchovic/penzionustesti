@@ -430,6 +430,8 @@ export default function Home() {
         .hero-cta { animation: fadeInUp 1s ease 1s both; }
         .scroll-line { animation: pulse 2s ease infinite; }
         @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+        @keyframes ken-burns{0%{transform:scale(1) translate(0,0)}25%{transform:scale(1.08) translate(-1%,0.5%)}50%{transform:scale(1.12) translate(0.5%,-0.5%)}75%{transform:scale(1.08) translate(-0.5%,1%)}100%{transform:scale(1) translate(0,0)}}
+        .hero-bg-zoom{animation:ken-burns 20s ease-in-out infinite;transform-origin:center center;will-change:transform}
         @keyframes expand-line{to{width:90px}}
         @keyframes fade-up{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
         .logo-top{animation:fade-up 0.8s ease 0s both}
@@ -520,7 +522,7 @@ export default function Home() {
       )}
       {/* HERO */}
       <section style={S.hero}>
-        <div style={S.heroBg}/>
+        <div className="hero-bg-zoom" style={S.heroBg}/>
         <div style={S.heroOverlay}/>
         <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.2) 75%, rgba(0,0,0,0.45) 100%)",zIndex:1,pointerEvents:"none"}}/>
         <div style={{position:"absolute",top:0,left:0,right:0,height:"35%",background:"linear-gradient(180deg,rgba(0,0,0,0.3) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
