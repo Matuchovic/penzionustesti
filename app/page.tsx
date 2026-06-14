@@ -128,6 +128,16 @@ export default function Home() {
         .logo-main{animation:fade-up 0.8s ease 0.15s both}
         .logo-line{width:0;height:1px;background:linear-gradient(90deg,transparent,#B89A6A,transparent);animation:expand-line 1.8s ease 0.3s forwards}
         .logo-sub-txt{animation:fade-up 0.8s ease 0.3s both}
+        @keyframes liq1{0%,100%{width:28px}50%{width:22px}}
+        @keyframes liq2{0%,100%{width:20px}50%{width:14px;transform:translateX(4px)}}
+        @keyframes liq3{0%,100%{width:28px}50%{width:24px}}
+        .liq-l{height:2px;background:#e8dcc8;border-radius:2px;transition:width 0.45s cubic-bezier(0.4,0,0.2,1),transform 0.45s cubic-bezier(0.4,0,0.2,1),background 0.3s,box-shadow 0.3s,opacity 0.3s}
+        .liq-l1{animation:liq1 3s ease-in-out infinite}
+        .liq-l2{animation:liq2 3s ease-in-out infinite 0.5s}
+        .liq-l3{animation:liq3 3s ease-in-out infinite 1s}
+        .liq-open1{animation:none!important;width:24px!important;transform:rotate(45deg) translate(5px,6px)!important;background:#B89A6A!important;box-shadow:0 0 12px rgba(184,154,106,0.9),0 0 28px rgba(184,154,106,0.4)!important}
+        .liq-open2{animation:none!important;width:0!important;opacity:0!important}
+        .liq-open3{animation:none!important;width:24px!important;transform:rotate(-45deg) translate(5px,-6px)!important;background:#B89A6A!important;box-shadow:0 0 12px rgba(184,154,106,0.9),0 0 28px rgba(184,154,106,0.4)!important}
         .nav-links-desktop { display: flex; }
         .nav-cta-desktop { display: block; }
         .hamburger { display: none; }
@@ -167,10 +177,10 @@ export default function Home() {
           ))}
         </ul>
         <button className="nav-cta-desktop" style={{background:"linear-gradient(135deg,rgba(184,154,106,0.2),rgba(184,154,106,0.08))",border:"1px solid rgba(184,154,106,0.3)",padding:"0.55rem 1.4rem",fontSize:"0.6rem",letterSpacing:"0.14em",textTransform:"uppercase" as const,color:"#C9AA7A",cursor:"pointer",fontFamily:"'Inter',sans-serif"}}>Rezervovat pobyt</button>
-        <button className="hamburger" onClick={()=>setMenuOpen(!menuOpen)} style={{background:"none",border:"none",cursor:"pointer",flexDirection:"column" as const,gap:"6px",padding:"8px"}}>
-          <span style={{width:26,height:2,background:"#F6F1E8",display:"block",transition:"all 0.35s",transform:menuOpen?"rotate(45deg) translate(0,8px)":"none"}}/>
-          <span style={{width:26,height:2,background:"#F6F1E8",display:"block",transition:"all 0.35s",opacity:menuOpen?0:1}}/>
-          <span style={{width:26,height:2,background:"#F6F1E8",display:"block",transition:"all 0.35s",transform:menuOpen?"rotate(-45deg) translate(0,-8px)":"none"}}/>
+        <button className="hamburger liq-btn" onClick={()=>setMenuOpen(!menuOpen)} style={{background:"none",border:"none",cursor:"pointer",flexDirection:"column" as const,gap:"5px",padding:"8px",display:"flex",alignItems:"flex-start"}}>
+          <span className={menuOpen?"liq-l liq-l1 liq-open1":"liq-l liq-l1"} style={{display:"block"}}/>
+          <span className={menuOpen?"liq-l liq-l2 liq-open2":"liq-l liq-l2"} style={{display:"block"}}/>
+          <span className={menuOpen?"liq-l liq-l3 liq-open3":"liq-l liq-l3"} style={{display:"block"}}/>
         </button>
       </nav>
       {menuOpen && (
