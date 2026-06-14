@@ -5,6 +5,7 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [activeRoom, setActiveRoom] = useState(0);
   const [activeDest, setActiveDest] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
@@ -43,7 +44,7 @@ export default function Home() {
     btnOutline: { background:"transparent", color:"#F6F1E8", border:"1px solid rgba(246,241,232,0.6)", padding:"0.75rem 2rem", fontSize:"0.72rem", letterSpacing:"0.14em", textTransform:"uppercase" as const, cursor:"pointer", fontFamily:"'Inter',sans-serif" },
     scrollIndicator: { position:"absolute" as const, bottom:"2.5rem", left:"50%", transform:"translateX(-50%)", color:"rgba(239,231,218,0.6)", fontSize:"0.6rem", letterSpacing:"0.2em", textTransform:"uppercase" as const, display:"flex", flexDirection:"column" as const, alignItems:"center", gap:"0.75rem" },
     scrollLine: { width:1, height:50, background:"linear-gradient(180deg,rgba(239,231,218,0.6),transparent)" },
-    editorial: { background:"#F6F1E8", padding:"8rem 6rem", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"6rem", alignItems:"center" },
+    editorial: { background:"#F6F1E8", padding:"8rem 6rem", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"6rem", alignItems:"center" } as React.CSSProperties,
     eyebrow: { fontSize:"0.62rem", letterSpacing:"0.25em", textTransform:"uppercase" as const, color:"#B89A6A", marginBottom:"2rem" },
     sectionTitle: { fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(2.8rem,4.5vw,4.5rem)", fontWeight:400, lineHeight:1.05, color:"#0F241D", marginBottom:"1.5rem" },
     divider: { width:60, height:1, background:"#B89A6A", margin:"0 0 2rem" },
@@ -52,7 +53,7 @@ export default function Home() {
     polaroidImg: { width:"100%", height:300, objectFit:"cover" as const },
     polaroidCaption: { textAlign:"center" as const, fontFamily:"'Cormorant Garamond',serif", fontSize:"1.1rem", color:"#888", marginTop:"1rem", fontStyle:"italic" },
     stamp: { position:"absolute" as const, bottom:-20, right:-20, width:100, height:100, borderRadius:"50%", border:"2px solid #0F241D", background:"#F6F1E8", display:"flex", flexDirection:"column" as const, alignItems:"center", justifyContent:"center", fontFamily:"'Cormorant Garamond',serif", textAlign:"center" as const, color:"#0F241D", transform:"rotate(-10deg)" },
-    rooms: { display:"grid", gridTemplateColumns:"1fr 1fr", minHeight:"85vh" },
+    rooms: { display:"grid", gridTemplateColumns:"1fr 1fr", minHeight:"85vh" } as React.CSSProperties,
     roomsLeft: { position:"relative" as const, overflow:"hidden", minHeight:500 },
     roomsImg: { position:"absolute" as const, inset:0, width:"100%", height:"100%", objectFit:"cover" as const, transition:"opacity 0.6s ease" },
     roomNav: { position:"absolute" as const, top:"50%", transform:"translateY(-50%)", display:"flex", justifyContent:"space-between", width:"100%", padding:"0 1rem", pointerEvents:"none" as const },
@@ -60,7 +61,7 @@ export default function Home() {
     roomsRight: { background:"#EFE7DA", padding:"5rem 4rem", display:"flex", flexDirection:"column" as const, justifyContent:"center", position:"relative" as const },
     features: { display:"flex", flexWrap:"wrap" as const, gap:"0.75rem", margin:"2rem 0" },
     featureTag: { padding:"0.5rem 1rem", border:"1px solid rgba(184,154,106,0.3)", fontSize:"0.75rem", letterSpacing:"0.06em", color:"#0F241D", background:"rgba(255,255,255,0.5)" },
-    ceskyRaj: { background:"#0F241D", padding:"7rem 6rem", display:"grid", gridTemplateColumns:"1fr 1.4fr", gap:"5rem", alignItems:"start", position:"relative" as const, overflow:"hidden" },
+    ceskyRaj: { background:"#0F241D", padding:"7rem 6rem", display:"grid", gridTemplateColumns:"1fr 1.4fr", gap:"5rem", alignItems:"start", position:"relative", overflow:"hidden" } as React.CSSProperties,
     ceskyList: { listStyle:"none", borderTop:"1px solid rgba(215,195,164,0.15)" },
     ceskyItem: { display:"flex", alignItems:"center", gap:"1rem", padding:"1.2rem 0", borderBottom:"1px solid rgba(215,195,164,0.15)", cursor:"pointer", transition:"all 0.3s" },
     destCard: { background:"#fff", boxShadow:"0 20px 60px rgba(0,0,0,0.4)", overflow:"hidden" },
@@ -79,16 +80,16 @@ export default function Home() {
     quoteContent: { position:"relative" as const, zIndex:2, textAlign:"center" as const, padding:"0 4rem" },
     quoteText: { fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(2rem,4.5vw,4rem)", fontWeight:300, color:"#F6F1E8", lineHeight:1.25, fontStyle:"italic" },
     quoteLine: { width:60, height:1, background:"#B89A6A", margin:"2.5rem auto 0" },
-    reservation: { background:"#EFE7DA", padding:"7rem 6rem" },
+    reservation: { background:"#EFE7DA", padding:"7rem 6rem" } as React.CSSProperties,
     resTitle: { fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(2rem,3vw,3rem)", fontWeight:400, color:"#0F241D", marginBottom:"1rem" },
     resSub: { fontSize:"0.9rem", color:"#666", lineHeight:1.7, maxWidth:420, marginBottom:"3rem" },
-    resForm: { background:"#fff", padding:"2.5rem", boxShadow:"0 8px 60px rgba(15,36,29,0.08)", border:"1px solid rgba(184,154,106,0.1)", display:"grid", gridTemplateColumns:"1fr 1fr 1fr auto", gap:"2rem", alignItems:"end" },
+    resForm: { background:"#fff", padding:"2.5rem", boxShadow:"0 8px 60px rgba(15,36,29,0.08)", border:"1px solid rgba(184,154,106,0.1)", display:"grid", gridTemplateColumns:"1fr 1fr 1fr auto", gap:"2rem", alignItems:"end" } as React.CSSProperties,
     formGroup: { display:"flex", flexDirection:"column" as const, gap:"0.5rem" },
     formLabel: { fontSize:"0.62rem", letterSpacing:"0.2em", textTransform:"uppercase" as const, color:"#0F241D", fontWeight:500 },
     formInput: { border:"none", borderBottom:"1.5px solid rgba(184,154,106,0.4)", background:"transparent", padding:"0.75rem 0", fontSize:"0.9rem", outline:"none", fontFamily:"'Inter',sans-serif" },
     btnReserve: { background:"#0F241D", color:"#F6F1E8", border:"none", padding:"0.9rem 2rem", fontSize:"0.72rem", letterSpacing:"0.14em", textTransform:"uppercase" as const, cursor:"pointer", whiteSpace:"nowrap" as const, fontFamily:"'Inter',sans-serif" },
-    footer: { background:"#0F241D", color:"#F6F1E8", padding:"5rem 6rem 3rem", position:"relative" as const },
-    footerGrid: { display:"grid", gridTemplateColumns:"1.5fr 1fr 1fr 1fr", gap:"4rem", marginBottom:"4rem", borderBottom:"1px solid rgba(215,195,164,0.12)", paddingBottom:"4rem" },
+    footer: { background:"#0F241D", color:"#F6F1E8", padding:"5rem 6rem 3rem", position:"relative" } as React.CSSProperties,
+    footerGrid: { display:"grid", gridTemplateColumns:"1.5fr 1fr 1fr 1fr", gap:"4rem", marginBottom:"4rem", borderBottom:"1px solid rgba(215,195,164,0.12)", paddingBottom:"4rem" } as React.CSSProperties,
     footerLogoName: { fontFamily:"'Cormorant Garamond',serif", fontSize:"1.5rem", color:"#F6F1E8", marginBottom:"0.25rem" },
     footerLogoSub: { fontSize:"0.65rem", letterSpacing:"0.15em", color:"#B89A6A", textTransform:"uppercase" as const, marginBottom:"1.5rem" },
     footerDesc: { fontSize:"0.85rem", color:"rgba(239,231,218,0.45)", lineHeight:1.8 },
@@ -114,6 +115,35 @@ export default function Home() {
         .hero-cta { animation: fadeInUp 1s ease 1s both; }
         .scroll-line { animation: pulse 2s ease infinite; }
         @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+        @keyframes expand-line{to{width:90px}}
+        @keyframes fade-up{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+        .logo-top{animation:fade-up 0.8s ease 0s both}
+        .logo-main{animation:fade-up 0.8s ease 0.15s both}
+        .logo-line{width:0;height:1px;background:linear-gradient(90deg,transparent,#B89A6A,transparent);animation:expand-line 1.8s ease 0.3s forwards}
+        .logo-sub-txt{animation:fade-up 0.8s ease 0.3s both}
+        .nav-links-desktop { display: flex; }
+        .nav-cta-desktop { display: block; }
+        .hamburger { display: none; }
+        .mobile-menu { display: none; }
+        .mobile-menu.open { display: flex; }
+        @media (max-width: 768px) {
+          .nav-links-desktop { display: none !important; }
+          .nav-cta-desktop { display: none !important; }
+          .hamburger { display: flex !important; }
+          .editorial-grid { grid-template-columns: 1fr !important; padding: 4rem 1.5rem !important; gap: 3rem !important; }
+          .rooms-grid { grid-template-columns: 1fr !important; }
+          .rooms-right-pad { padding: 3rem 1.5rem !important; }
+          .cesky-grid { grid-template-columns: 1fr !important; padding: 4rem 1.5rem !important; gap: 2rem !important; }
+          .gallery-grid-mobile { grid-template-columns: 1fr 1fr !important; }
+          .gallery-item-tall { grid-row: span 1 !important; height: 200px !important; }
+          .gallery-item-short { height: 200px !important; }
+          .res-form-grid { grid-template-columns: 1fr !important; padding: 1.5rem !important; }
+          .footer-grid-mobile { grid-template-columns: 1fr 1fr !important; gap: 2rem !important; padding: 3rem 1.5rem 2rem !important; }
+          .quote-pad { padding: 0 1.5rem !important; }
+          .reservation-pad { padding: 4rem 1.5rem !important; }
+          .polaroid-wrap { transform: rotate(0deg) !important; max-width: 100% !important; }
+          .hero-title-mobile { font-size: clamp(3rem,14vw,5rem) !important; }
+        }
       `}</style>
 
       {/* NAV */}
@@ -145,7 +175,7 @@ export default function Home() {
         <div style={S.heroBg}/>
         <div style={S.heroOverlay}/>
         <div style={S.heroContent}>
-          <h1 className="hero-title" style={S.heroTitle}>
+          <h1 className="hero-title hero-title-mobile" style={S.heroTitle}>
             PENZION<span style={S.heroTitleItalic}>U ŠTĚSTÍ</span>
           </h1>
           <p className="hero-sub" style={S.heroSubtitle}>Váš domov v srdci Českého ráje</p>
@@ -160,7 +190,7 @@ export default function Home() {
       </section>
 
       {/* EDITORIAL */}
-      <section id="o-penzionu" style={S.editorial}>
+      <section id="o-penzionu" className="editorial-grid" style={S.editorial}>
         <div>
           <p style={S.eyebrow}>Náš příběh</p>
           <h2 style={S.sectionTitle}>
@@ -186,7 +216,7 @@ export default function Home() {
       </section>
 
       {/* ROOMS */}
-      <section id="pokoje" style={S.rooms}>
+      <section id="pokoje" className="rooms-grid" style={S.rooms}>
         <div style={S.roomsLeft}>
           <img key={activeRoom} src={rooms[activeRoom]} alt="Pokoj" style={S.roomsImg}/>
           <div style={S.roomNav}>
@@ -194,7 +224,7 @@ export default function Home() {
             <button style={S.roomBtn} onClick={()=>setActiveRoom((activeRoom+1)%rooms.length)}>→</button>
           </div>
         </div>
-        <div style={S.roomsRight}>
+        <div className="rooms-right-pad" style={S.roomsRight}>
           <p style={S.eyebrow}>Naše pokoje</p>
           <h2 style={{...S.sectionTitle,fontSize:"clamp(2.2rem,3.5vw,3.5rem)"}}>Pohodlí s výhledem<br/>do přírody</h2>
           <p style={{...S.bodyText,marginBottom:"1rem"}}>Nabízíme útulné pokoje a apartmány zařízené v přírodním stylu. Každý z nich má své kouzlo a výhled, který pohladí duši.</p>
@@ -208,7 +238,7 @@ export default function Home() {
       </section>
 
       {/* ČESKÝ RÁJ */}
-      <section id="český-ráj" style={S.ceskyRaj}>
+      <section id="český-ráj" className="cesky-grid" style={S.ceskyRaj}>
         <div>
           <p style={{...S.eyebrow,color:"#B89A6A"}}>Český ráj</p>
           <h2 style={{...S.sectionTitle,color:"#F6F1E8",marginBottom:"3rem"}}>Co můžete<br/>zažít</h2>
@@ -240,11 +270,11 @@ export default function Home() {
             <div style={{width:40,height:1,background:"#B89A6A",marginTop:"0.75rem",marginLeft:"auto"}}/>
           </div>
         </div>
-        <div style={S.galleryGrid}>
+        <div className="gallery-grid-mobile" style={S.galleryGrid}>
           {[
             {src:"/images/hero.jpg",col:"span 2",h:260},
             {src:"/images/pool.jpg",col:"span 2",h:260},
-            {src:"/images/garden.jpg",col:"span 2",h:530,row:"span 2"},
+            {src:"/images/garden.jpg",col:"span 2",h:530,row:"span 2",tall:true},
             {src:"/images/room1.jpg",col:"span 2",h:260},
             {src:"/images/firepit.jpg",col:"span 2",h:260},
           ].map((img,i)=>(
@@ -262,17 +292,17 @@ export default function Home() {
       <section style={S.quoteSection}>
         <div style={S.quoteBg}/>
         <div style={S.quoteOverlay}/>
-        <div style={S.quoteContent}>
+        <div className="quote-pad" style={S.quoteContent}>
           <blockquote style={S.quoteText}>„Nejkrásnější vzpomínky<br/>nevznikají ve spěchu."</blockquote>
           <div style={S.quoteLine}/>
         </div>
       </section>
 
       {/* RESERVATION */}
-      <section id="rezervace" style={S.reservation}>
+      <section id="rezervace" className="reservation-pad" style={S.reservation}>
         <h2 style={S.resTitle}>Rezervujte<br/>svůj pobyt</h2>
         <p style={S.resSub}>Těšíme se na vaši návštěvu v srdci Českého ráje. Vyberte termín a my se postaráme o zbytek.</p>
-        <div style={S.resForm}>
+        <div className="res-form-grid" style={S.resForm}>
           <div style={S.formGroup}>
             <label style={S.formLabel}>Příjezd</label>
             <input type="date" defaultValue="2024-06-20" style={S.formInput}/>
@@ -296,7 +326,7 @@ export default function Home() {
 
       {/* FOOTER */}
       <footer id="kontakt" style={S.footer}>
-        <div style={S.footerGrid}>
+        <div className="footer-grid-mobile" style={S.footerGrid}>
           <div>
             <div style={S.footerLogoName}>PENZION U ŠTĚSTÍ</div>
             <div style={S.footerLogoSub}>Český ráj</div>
