@@ -180,7 +180,11 @@ function MapCanvas() {
     const particles=Array.from({length:30},()=>{const a=Math.random()*Math.PI*2,d=15+Math.random()*200;return{x:CX+Math.cos(a)*d*1.5,y:CY+Math.sin(a)*d*0.75,s:0.5+Math.random()*1.5,sp:0.001+Math.random()*0.0015,o:Math.random()*Math.PI*2,dr:Math.random()*Math.PI*2};});
 
     let t2=0;let animId:number;
-    function draw(){
+    let lastTime=0;
+    function draw(ts:number=0){
+      const delta=Math.min(ts-lastTime,50);
+      lastTime=ts;
+      t+=delta>0?delta/12:1;
       c3.clearRect(0,0,W,H);
       const sy=(t2*0.035)%H;
       const sg=c3.createLinearGradient(0,sy-30,0,sy+30);
@@ -304,7 +308,7 @@ function CloudCanvas() {
       animId = requestAnimationFrame(draw);
     }
 
-    draw();
+    animId = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(animId);
   }, []);
   return null;
@@ -341,10 +345,14 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
       ctx.lineWidth=0.9;ctx.stroke();
     }
 
-    function draw(){
-      const night = Math.max(0, 1-t/280);
-      const dawn  = Math.min(1, Math.max(0,(t-80)/220));
-      const full  = Math.min(1, Math.max(0,(t-240)/80));
+    let lastTime=0;
+    function draw(ts:number=0){
+      const delta=Math.min(ts-lastTime,50);
+      lastTime=ts;
+      t+=delta>0?delta/12:1;
+      const night = Math.max(0, 1-t/160);
+      const dawn  = Math.min(1, Math.max(0,(t-45)/130));
+      const full  = Math.min(1, Math.max(0,(t-150)/50));
 
       // Sky gradient night→dawn
       const g = ctx.createLinearGradient(0,0,0,H);
@@ -424,7 +432,7 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
       });
 
       // Birds
-      if(t>120){
+      if(t>60){
         const ba=Math.min(1,(t-120)/60);
         flocks.forEach((flock,fi)=>{
           flock.forEach(b=>{
@@ -450,10 +458,9 @@ function LoadingScreen({onDone}: {onDone: ()=>void}) {
         }
       }
 
-      t++;
       animId = requestAnimationFrame(draw);
     }
-    draw();
+    animId = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(animId);
   }, []);
 
