@@ -291,7 +291,11 @@ export default function Home() {
       <section style={S.hero}>
         <div style={S.heroBg}/>
         <div style={S.heroOverlay}/>
-        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.25) 75%, rgba(0,0,0,0.55) 100%)",zIndex:1,pointerEvents:"none"}}/>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.2) 75%, rgba(0,0,0,0.45) 100%)",zIndex:1,pointerEvents:"none"}}/>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:"35%",background:"linear-gradient(180deg,rgba(0,0,0,0.3) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
+        <div style={{position:"absolute",bottom:0,left:0,right:0,height:"40%",background:"linear-gradient(0deg,rgba(0,0,0,0.45) 0%,rgba(0,0,0,0.2) 50%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
+        <div style={{position:"absolute",top:0,bottom:0,left:0,width:"18%",background:"linear-gradient(90deg,rgba(0,0,0,0.25) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
+        <div style={{position:"absolute",top:0,bottom:0,right:0,width:"18%",background:"linear-gradient(270deg,rgba(0,0,0,0.25) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
         <div style={{position:"absolute",top:0,left:0,right:0,height:"35%",background:"linear-gradient(180deg,rgba(0,0,0,0.35) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
         <div style={{position:"absolute",bottom:0,left:0,right:0,height:"40%",background:"linear-gradient(0deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.25) 50%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
         <div style={{position:"absolute",top:0,bottom:0,left:0,width:"20%",background:"linear-gradient(90deg,rgba(0,0,0,0.3) 0%,transparent 100%)",zIndex:1,pointerEvents:"none"}}/>
